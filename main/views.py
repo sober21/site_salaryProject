@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request
-from main.main import current_data
+from main.main import current_data, salary_of_one_day
 
 app = Flask(__name__)
 
 current_data = current_data
+
+
 @app.route("/", methods=["POST", "GET"])
 def hello_world():
     if request.method == "POST":
@@ -23,17 +25,12 @@ def one_page(name=None):
 def get_date():
     if request.method == 'POST':
         date = request.form.get('date')
-        return f'{date}'
+        hours = request.form.get('hours')
+        positions = request.form.get('positions')
+        mens = request.form.get('mens')
+        salary = salary_of_one_day(hours, positions, mens)
+        return f'{date}: {salary:.1f} руб.'
     return render_template('date.html', cur_date=current_data)
-
-@app.route("/second/")
-def second_page():
-    return "second_page with endpoint trailing slash"
-
-
-@app.route("/second")
-def second_page2():
-    return render_template('second.html')
 
 
 @app.route("/users/<username>")
