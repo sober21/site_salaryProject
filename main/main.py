@@ -7,6 +7,8 @@ PRICE_OF_HOUR = 91
 PRICE_OF_POSITION = 3.7
 
 
+current_data = date.today()
+
 def salary_of_one_day(h, pos, emp) -> int:
     #Считает зарплату за один день и возвращает число
     salary = h * PRICE_OF_HOUR + (pos / emp) * PRICE_OF_POSITION
@@ -66,10 +68,10 @@ def valid_month(c):
 
 def write_in_file(sal) -> None:
     '''Записывет данные в файл'''
-    file = 'salary1.txt'
+    file = 'for_text_files/salary1.txt'
 
     with open(file, 'a', encoding='utf-8') as file_for_write:
-        cur_date = datetime(year=2025, month=1, day=2)
+        cur_date = datetime.today()
         cur_date = datetime(year=cur_date.year, month=cur_date.month, day=cur_date.day)
         empty_f = empty_file(file)
         if empty_f:  # если файл пустой
