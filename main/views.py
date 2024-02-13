@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from main.main import current_data, salary_of_one_day, render_date
-from main.my_database import execute_query, connection, delete_query, add_query
+from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
 app = Flask(__name__)
 
 current_data = current_data
@@ -30,12 +30,21 @@ def get_date():
         mens = request.form.get('mens')
         salary = salary_of_one_day(hours, positions, mens)
         create_salary = add_query('salary', ('date', 'amount'), (date, salary))
-        print(create_salary)
         execute_query(connection, create_salary)
         date = render_date(date)
-        return f'{date}: {salary:.1f} руб.'
+        res = f'{date}: {int(salary)} руб.'
+        return render_template('date.html', cur_date=current_data, res=res)
     return render_template('date.html', cur_date=current_data)
 
+
+@app.route('/date/select', methods=['POST', 'GET'])
+def get_from_bd():
+    if request.method == 'POST':
+        date = request.form.get('date')
+        query = select_query('salary', 'amount', 'date', date)
+        lst = execute_read_query(connection, query)
+        return lst
+    return render_template('select.html', cur_date=current_data)
 
 @app.route("/users/<username>")
 def get_profile_username(username):

@@ -7,13 +7,18 @@ def delete_query(table, column, value):
     return f'DELETE FROM {table} WHERE {column} = {value}'
 
 
+def select_query(table, column, column1, value):
+    '''Создаёт запрос на удаление'''
+    return f'SELECT {column} FROM {table} WHERE {column1} = {value}'
+
+
 def add_query(table, column, value):
     '''Создаёт запрос на вставку'''
     return f'INSERT INTO {table} {column} VALUES {value};'
 
 
 def create_connection(path):
-    '''создаёт связь с базой данных'''
+    '''Создаёт связь с базой данных'''
     connection = None
     try:
         connection = sqlite3.connect(path, check_same_thread=False)
@@ -23,11 +28,11 @@ def create_connection(path):
     return connection
 
 
-connection = create_connection(r'D:\pythonProjects\PycharmProjects\your_salary_project\main\db_main.sqlite')
+connection = create_connection(r'D:\PycharmProjects\site_salaryProject\main\db_main.sqlite')
 
 
 def execute_query(con, query):
-    '''выполняет запросы'''
+    '''Выполняет запросы'''
     cursor = connection.cursor()
     try:
         cursor.execute(query)
@@ -38,7 +43,7 @@ def execute_query(con, query):
 
 
 def execute_read_query(connection, query):
-    '''читает данные из базы данных'''
+    '''Читает данные из базы данных'''
     cursor = connection.cursor()
     result = None
     try:
