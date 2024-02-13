@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from main.main import current_data, salary_of_one_day, render_date
-from main.my_database import execute_query, connection
+from main.my_database import execute_query, connection, delete_query, add_query
 app = Flask(__name__)
 
 current_data = current_data
@@ -29,7 +29,8 @@ def get_date():
         positions = request.form.get('positions')
         mens = request.form.get('mens')
         salary = salary_of_one_day(hours, positions, mens)
-        create_salary = f"INSERT INTO salary (date, amount) VALUES({repr(date)}, {salary});"
+        create_salary = add_query('salary', ('date', 'amount'), (date, salary))
+        print(create_salary)
         execute_query(connection, create_salary)
         date = render_date(date)
         return f'{date}: {salary:.1f} руб.'
@@ -42,4 +43,5 @@ def get_profile_username(username):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    pass
+

@@ -2,6 +2,16 @@ import sqlite3
 from sqlite3 import Error
 
 
+def delete_query(table, column, value):
+    '''Создаёт запрос на удаление'''
+    return f'DELETE FROM {table} WHERE {column} = {value}'
+
+
+def add_query(table, column, value):
+    '''Создаёт запрос на вставку'''
+    return f'INSERT INTO {table} {column} VALUES {value};'
+
+
 def create_connection(path):
     '''создаёт связь с базой данных'''
     connection = None
@@ -59,8 +69,20 @@ create_salary = f"""
 
 select = 'SELECT * from salary'
 salarys = execute_read_query(connection, select)
-for salary in salarys:  #смотрим все данные из базы
-    print(salary)
+# select_post_description = "SELECT amount FROM salary WHERE id = 2"
+# post_description = execute_read_query(connection, select_post_description)
 
+update_post_description = """
+UPDATE
+  salary
+SET
+  amount = 1000
+WHERE
+  id = 2
+"""
+# delete_date = f'DELETE FROM salary WHERE id = 2'
+# execute_query(connection, delete_date)
+if __name__ == '__main__':
 
-
+    for salary in salarys:  # смотрим все данные из базы
+        print(salary)
