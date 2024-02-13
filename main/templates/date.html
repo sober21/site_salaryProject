@@ -6,8 +6,14 @@
 </head>
 <body>
     <form action="" method="post">
-        <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
-        <input type="submit" value="Отправить">
+        <label for="hours">Количество часов:</label>
+            <input type="number" id="hours" name="hours" min="1" max="12" value="9">
+        <label for="positions">Количество позиций:</label>
+            <input type="number" name="positions" id="positions" min="1" value="1">
+        <label for="mens">Количество человек:</label>
+            <input type="number" name="mens" id="mens" min="1" value="3">
+            <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
+            <input type="submit" value="Отправить">
     </form>
 </body>
 </html>

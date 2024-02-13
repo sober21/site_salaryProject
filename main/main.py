@@ -6,12 +6,12 @@ locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 PRICE_OF_HOUR = 91
 PRICE_OF_POSITION = 3.7
 
-
 current_data = date.today()
 
-def salary_of_one_day(h, pos, emp) -> int:
-    #Считает зарплату за один день и возвращает число
-    salary = h * PRICE_OF_HOUR + (pos / emp) * PRICE_OF_POSITION
+
+def salary_of_one_day(h, pos, emp) -> int | float:
+    # Считает зарплату за один день и возвращает число
+    salary = int(h) * PRICE_OF_HOUR + (int(pos) / int(emp)) * PRICE_OF_POSITION
     return salary
 
 
@@ -90,7 +90,7 @@ def write_in_file(sal) -> None:
                     month = cur_date.strftime('%B')
                     print(f'{cur_date.year} год', file=file_for_write)
                     print(f'{month}', file=file_for_write)
-                elif cur_date.month>last_date.month:
+                elif cur_date.month > last_date.month:
                     month = cur_date.strftime('%B')
                     print(f'{month}', file=file_for_write)
         cur_date = cur_date.strftime('%d %B')
