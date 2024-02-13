@@ -8,7 +8,10 @@ PRICE_OF_POSITION = 3.7
 
 current_data = date.today()
 
-
+def render_date(dt:str) -> str:
+    my_date = datetime.strptime(dt, '%Y-%m-%d')
+    my_date = my_date.strftime('%d %B')
+    return my_date
 def salary_of_one_day(h, pos, emp) -> int | float:
     # Считает зарплату за один день и возвращает число
     salary = int(h) * PRICE_OF_HOUR + (int(pos) / int(emp)) * PRICE_OF_POSITION

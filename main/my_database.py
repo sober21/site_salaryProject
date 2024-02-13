@@ -3,6 +3,7 @@ from sqlite3 import Error
 
 
 def create_connection(path):
+    '''создаёт связь с базой данных'''
     connection = None
     try:
         connection = sqlite3.connect(path, check_same_thread=False)
@@ -12,10 +13,11 @@ def create_connection(path):
     return connection
 
 
-connection = create_connection(r'D:\PycharmProjects\site_salaryProject\main\db_main.sqlite')
+connection = create_connection(r'D:\pythonProjects\PycharmProjects\your_salary_project\main\db_main.sqlite')
 
 
 def execute_query(con, query):
+    '''выполняет запросы'''
     cursor = connection.cursor()
     try:
         cursor.execute(query)
@@ -25,14 +27,40 @@ def execute_query(con, query):
         print(f'Произошла ошибка {e}')
 
 
+def execute_read_query(connection, query):
+    '''читает данные из базы данных'''
+    cursor = connection.cursor()
+    result = None
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    except Error as e:
+        print(f"The error '{e}' occurred")
+
+
 create_salary_table = """
 CREATE TABLE IF NOT EXISTS salary (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  date TEXT NOT NULL,
+  date DATE,
   amount INTEGER
 );
 """
 
+create_salary = f"""
+        INSERT INTO
+          salary (date, amount)
+        VALUES
+          ('2024-02-13', '1000')
+          ;
+        """
+
+# execute_query(connection, create_salary)
+
+select = 'SELECT * from salary'
+salarys = execute_read_query(connection, select)
+for salary in salarys:  #смотрим все данные из базы
+    print(salary)
 
 
 

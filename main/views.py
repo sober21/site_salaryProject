@@ -1,11 +1,9 @@
 from flask import Flask, render_template, request
-from main.main import current_data, salary_of_one_day
+from main.main import current_data, salary_of_one_day, render_date
 from main.my_database import execute_query, connection
-
 app = Flask(__name__)
 
 current_data = current_data
-
 
 
 @app.route("/", methods=["POST", "GET"])
@@ -31,14 +29,9 @@ def get_date():
         positions = request.form.get('positions')
         mens = request.form.get('mens')
         salary = salary_of_one_day(hours, positions, mens)
-        create_salary = f"""
-        INSERT INTO
-          salary (date, amount)
-        VALUES
-          ({date}, {salary})
-          ;
-        """
+        create_salary = f"INSERT INTO salary (date, amount) VALUES({repr(date)}, {salary});"
         execute_query(connection, create_salary)
+        date = render_date(date)
         return f'{date}: {salary:.1f} руб.'
     return render_template('date.html', cur_date=current_data)
 
