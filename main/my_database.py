@@ -28,7 +28,7 @@ def create_connection(path):
     return connection
 
 
-connection = create_connection(r'D:\PycharmProjects\site_salaryProject\main\db_main.sqlite')
+connection = create_connection(r'D:\pythonProjects\PycharmProjects\your_salary_project\main\db_main.sqlite')
 
 
 def execute_query(con, query):

@@ -1,14 +1,10 @@
+{% extends 'base.html' %}
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Получаем дату</title>
-</head>
+
 <body>
-    <a href="http://127.0.0.1:5000">Домашняя страница</a>
-    <a href="http://127.0.0.1:5000">Удалить</a>
-    <a href="http://127.0.0.1:5000">Изменить</a>
-    <a href="http://127.0.0.1:5000/date/select">Показать</a>
+{% block content %}
 
     <form action="" method="post">
         <label for="hours">Количество часов:</label>
@@ -23,5 +19,6 @@
     {% if res %}
     {{res}}
     {% endif %}
+{% endblock content %}
 </body>
 </html>

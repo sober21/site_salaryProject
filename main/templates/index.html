@@ -1,16 +1,17 @@
+{% extends 'base.html' %}
+
+
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Главная страница</title>
-</head>
+
 <body>
+{% block content %}
     <h1>Главная страница!</h1>
     <form action="" method="post" id="myForm">
         <input type="text" name="language">
         <input type="text" name="framework">
         <input type="submit" name="зп" value="Посчитать" />
     </form>
-
+{% endblock content %}
 </body>
 </html>

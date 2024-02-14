@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request
 from main.main import current_data, salary_of_one_day, render_date
 from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
+
+
 app = Flask(__name__)
 
 current_data = current_data
@@ -12,13 +14,7 @@ def hello_world():
         language = request.form.get('language')
         framework = request.form['framework']
         return '<h1> The language is {}. The framework is {}.</h1>'.format(language, framework)
-    return render_template(r'index.html', cur_date=current_data)
-
-
-@app.route("/one/<name>")
-@app.route("/one/")
-def one_page(name=None):
-    return render_template('one.html', name=name)
+    return render_template(r'index.html', cur_date=current_data, title='Главная страница')
 
 
 @app.route('/date', methods=['POST', 'GET'])
@@ -34,7 +30,7 @@ def get_date():
         date = render_date(date)
         res = f'{date}: {int(salary)} руб.'
         return render_template('date.html', cur_date=current_data, res=res)
-    return render_template('date.html', cur_date=current_data)
+    return render_template('date.html', cur_date=current_data, title='Добавить')
 
 
 @app.route('/date/select', methods=['POST', 'GET'])
@@ -43,8 +39,8 @@ def get_from_bd():
         date = request.form.get('date')
         query = select_query('salary', 'amount', 'date', date)
         lst = execute_read_query(connection, query)
-        return lst
-    return render_template('select.html', cur_date=current_data)
+        return render_template('select.html', cur_date=current_data, title='Выборка', context=lst)
+    return render_template('select.html', cur_date=current_data, title='Выборка')
 
 @app.route("/users/<username>")
 def get_profile_username(username):
