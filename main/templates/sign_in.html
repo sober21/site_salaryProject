@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+{% block content %}
+    <h1>Личный кабинет</h1>
+    <form method="post">
+        <label for="login">Имя:</label>
+
+        <input type="text" name="login" id="login">
+        <label for="password">Пароль:</label>
+        <input type="text" name="password" id="password">
+        <input type="submit" value="Войти">
+    </form>
+    <a href="http://127.0.0.1:5000/lk">Зарегистрироваться</a>
+{% endblock content %}
+</body>
+</html>

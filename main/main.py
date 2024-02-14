@@ -8,10 +8,23 @@ PRICE_OF_POSITION = 3.7
 
 current_data = date.today()
 
-def render_date(dt:str) -> str:
+
+def change_month_name(month):
+    if month[-1] == 'т':
+        month = month + 'а'
+    else:
+        month = month[:-1] + 'я'
+    return month
+
+
+def render_date(dt: str) -> str:
     my_date = datetime.strptime(dt, '%Y-%m-%d')
     my_date = my_date.strftime('%d %B')
+    day, month = my_date.split()[0], change_month_name(my_date.split()[-1])
+    my_date = f'{day} {month}'
     return my_date
+
+
 def salary_of_one_day(h, pos, emp) -> int | float:
     # Считает зарплату за один день и возвращает число
     salary = int(h) * PRICE_OF_HOUR + (int(pos) / int(emp)) * PRICE_OF_POSITION
@@ -133,4 +146,8 @@ if __name__ == '__main__':
     # cur = datetime(day=cur.day, month=cur.month, year=cur.year)
     # last = datetime(year=2024, month=2, day=7)
     # print(layaway_list(cur, last))
-    main()
+    assert (change_month_name('январь')) == 'января'
+    assert (change_month_name('май')) == 'мая'
+    assert (change_month_name('август')) == 'августа'
+    assert (change_month_name('июнь')) == 'июня'
+    assert (change_month_name('июль')) == 'июля'

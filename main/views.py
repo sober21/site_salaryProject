@@ -10,11 +10,26 @@ current_data = current_data
 
 @app.route("/", methods=["POST", "GET"])
 def hello_world():
-    if request.method == "POST":
-        language = request.form.get('language')
-        framework = request.form['framework']
-        return '<h1> The language is {}. The framework is {}.</h1>'.format(language, framework)
+    if request.method == 'POST':
+        date = request.form.get('date')
+        hours = request.form.get('hours')
+        positions = request.form.get('positions')
+        mens = request.form.get('mens')
+        salary = salary_of_one_day(hours, positions, mens)
+        date = render_date(date)
+        res = int(salary)
+        return render_template(r'index.html', cur_date=current_data, title='Главная страница', date=date, res=res)
     return render_template(r'index.html', cur_date=current_data, title='Главная страница')
+
+
+app.route('/users/<name>')
+def users(name=None):
+    return render_template('users.html', name=name, title='Личный кабинет')
+
+
+@app.route('/sign_in/')
+def l_k():
+    return render_template('sign_in.html', title='Личный кабинет')
 
 
 @app.route('/date', methods=['POST', 'GET'])

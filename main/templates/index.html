@@ -6,12 +6,20 @@
 
 <body>
 {% block content %}
-    <h1>Главная страница!</h1>
-    <form action="" method="post" id="myForm">
-        <input type="text" name="language">
-        <input type="text" name="framework">
-        <input type="submit" name="зп" value="Посчитать" />
+    <h1>Посчитай зарплату за сегодня</h1>
+    <form action="" method="post">
+        <label for="hours">Количество часов:</label>
+            <input type="number" id="hours" name="hours" min="1" max="12" value="9">
+        <label for="positions">Количество позиций:</label>
+            <input type="number" name="positions" id="positions" min="1" value="1">
+        <label for="mens">Количество человек:</label>
+            <input type="number" name="mens" id="mens" min="1" value="3">
+            <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
+            <input type="submit" value="Посчитать">
     </form>
+    {% if res %}
+    {{ date }} {{ res }} руб.
+    {% endif %}
 {% endblock content %}
 </body>
 </html>
