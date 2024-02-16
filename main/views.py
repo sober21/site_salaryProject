@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, session
 from main.main import current_data, salary_of_one_day, render_date
 from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
-
 
 app = Flask(__name__)
 
@@ -9,7 +8,9 @@ current_data = current_data
 
 
 @app.route("/", methods=["POST", "GET"])
-def hello_world():
+def index():
+    if 'username' in session:
+        redirect(url_for('users'))
     if request.method == 'POST':
         date = request.form.get('date')
         hours = request.form.get('hours')
@@ -18,18 +19,32 @@ def hello_world():
         salary = salary_of_one_day(hours, positions, mens)
         date = render_date(date)
         res = int(salary)
-        return render_template(r'index.html', cur_date=current_data, title='Главная страница', date=date, res=res)
+        return render_template(r'index.html', username=session['username'], cur_date=current_data,
+                               title='Главная страница', date=date, res=res)
     return render_template(r'index.html', cur_date=current_data, title='Главная страница')
 
 
-app.route('/users/<name>')
+@app.route('/users/<name>')
+@app.route('/users/')
 def users(name=None):
-    return render_template('users.html', name=name, title='Личный кабинет')
+    if name:
+        return render_template('users.html', name=name, title='Личный кабинет')
+    return redirect(url_for('login'))
 
 
-@app.route('/sign_in/')
-def l_k():
-    return render_template('sign_in.html', title='Личный кабинет')
+@app.route('/login/', methods=['POST', 'GET'])
+def login():
+    if request.method == 'POST':
+        session['username'] = request.form['username']
+        session['password'] = request.form['password']
+        return redirect(url_for('index'))
+    return render_template('login.html', title='Личный кабинет')
+
+@app.route('/registration')
+def registration():
+    session.pop('username', None)
+    session.pop('password', None)
+    return redirect(url_for('index'))
 
 
 @app.route('/date', methods=['POST', 'GET'])
@@ -57,11 +72,6 @@ def get_from_bd():
         return render_template('select.html', cur_date=current_data, title='Выборка', context=lst)
     return render_template('select.html', cur_date=current_data, title='Выборка')
 
-@app.route("/users/<username>")
-def get_profile_username(username):
-    return f"Имя пользователя: {username}"
-
 
 if __name__ == '__main__':
     pass
-
