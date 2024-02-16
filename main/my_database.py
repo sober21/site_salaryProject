@@ -28,7 +28,7 @@ def create_connection(path):
     return connection
 
 
-connection = create_connection(r'D:\pythonProjects\PycharmProjects\your_salary_project\main\db_main.sqlite')
+connection = create_connection(r'D:\PycharmProjects\site_salaryProject\main\db_main.sqlite')
 
 
 def execute_query(con, query):
@@ -55,10 +55,10 @@ def execute_read_query(connection, query):
 
 
 create_salary_table = """
-CREATE TABLE IF NOT EXISTS salary (
+CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  date DATE,
-  amount INTEGER
+  name TEXT,
+  email TEXT
 );
 """
 
@@ -88,6 +88,4 @@ WHERE
 # delete_date = f'DELETE FROM salary WHERE id = 2'
 # execute_query(connection, delete_date)
 if __name__ == '__main__':
-
-    for salary in salarys:  # смотрим все данные из базы
-        print(salary)
+    execute_query(connection, create_salary_table)

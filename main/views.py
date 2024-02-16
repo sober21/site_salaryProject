@@ -1,16 +1,18 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from main.main import current_data, salary_of_one_day, render_date
 from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
+import os
 
 app = Flask(__name__)
 
 current_data = current_data
+app.secret_key = os.urandom(23).hex()
 
 
 @app.route("/", methods=["POST", "GET"])
 def index():
     if 'username' in session:
-        redirect(url_for('users'))
+        return redirect(url_for('users', name=session['username']))
     if request.method == 'POST':
         date = request.form.get('date')
         hours = request.form.get('hours')
@@ -19,7 +21,7 @@ def index():
         salary = salary_of_one_day(hours, positions, mens)
         date = render_date(date)
         res = int(salary)
-        return render_template(r'index.html', username=session['username'], cur_date=current_data,
+        return render_template(r'index.html', cur_date=current_data,
                                title='Главная страница', date=date, res=res)
     return render_template(r'index.html', cur_date=current_data, title='Главная страница')
 
@@ -32,7 +34,8 @@ def users(name=None):
     return redirect(url_for('login'))
 
 
-@app.route('/login/', methods=['POST', 'GET'])
+@app.route('/login/', methods=['POST', 'GET '])
+@app.route('/login/')
 def login():
     if request.method == 'POST':
         session['username'] = request.form['username']
@@ -40,11 +43,20 @@ def login():
         return redirect(url_for('index'))
     return render_template('login.html', title='Личный кабинет')
 
-@app.route('/registration')
-def registration():
-    session.pop('username', None)
-    session.pop('password', None)
-    return redirect(url_for('index'))
+
+@app.route('/register', methods=['POST', 'GET'])
+def register():
+    if request.method == 'POST':
+        if request.form['username'].isalnum():
+            session['username'] = request.form['username']
+        elif request.form['password'].isalnum():
+            session['password'] = request.form['password']
+        elif '@' in request.form['email'] and request.form['email'].isalnum():
+            session['email'] = request.form['email']
+        execute_query(connection, add_query(table='users', column=('name', 'email'), value=(session['username'],
+                                                                                            session['email'])))
+        return redirect(url_for('users', name=session['username']))
+    return render_template('register.html')
 
 
 @app.route('/date', methods=['POST', 'GET'])

@@ -5,8 +5,8 @@
     <title>{% block title %}{{ title }}{% endblock title %}</title>
 </head>
 <body>
-    <a href="http://127.0.0.1:5000">Домашняя страница</a>
-    <a href="http://127.0.0.1:5000/users/">Личный кабинет</a>
+    <a href="{{ url_for('index') }}">Домашняя страница</a>
+    <a href="{{ url_for('login') }}">Личный кабинет</a>
     {% block content %}
 
     {% endblock content %}
