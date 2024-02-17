@@ -6,11 +6,12 @@
 <body>
 {% block content %}
     <h1>Личный кабинет</h1>
+    <h3>{{ msg }}</h3>
     <form method="post">
         <label for="username">Имя:</label>
-        <input type="text" name="username" id="username">
+        <input type="text" name="username" id="username" placeholder="имя">
         <label for="password">Пароль:</label>
-        <input type="text" name="password" id="password">
+        <input type="text" name="password" id="password" placeholder="пароль">
         <input type="submit" value="Войти">
     </form>
     <a href="{{ url_for('register') }}">Зарегистрироваться</a>

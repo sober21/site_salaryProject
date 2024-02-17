@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from main.main import current_data, salary_of_one_day, render_date
+from main.main import current_data, salary_of_one_day, render_date, get_email, get_username
 from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
 import os
 
@@ -38,10 +38,11 @@ def users(name=None):
 @app.route('/login/')
 def login():
     msg = ''
-    if request.method == 'POST':
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
         name = request.form['username']
         password = request.form['password']
-        account = execute_read_query(connection, f'SELECT * FROM users WHERE name = {repr(name)} AND password = {repr(password)}')
+        account = execute_read_query(connection,
+                                     f'SELECT * FROM users WHERE name = {repr(name)} AND password = {repr(password)}')
         if account:
             return redirect(url_for('users', name=name))
         else:
@@ -51,20 +52,26 @@ def login():
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
-    if request.method == 'POST':
-        if request.form['username'].isalnum():
-            session['username'] = request.form['username']
-
-        session['password'] = request.form['password']
-
-        session['email'] = request.form['email']
-        execute_query(connection,
-                      add_query(table='users', column=('name', 'password', 'email'),
-                                value=(session['username'], session['password'],
-                                       session['email']
-                                       )))
-        return redirect(url_for('users', name=session['username']))
-    return render_template('register.html')
+    msg = ''
+    if request.method == 'POST' and 'username' in request.form and 'password' in request.form and 'email' in request.form:
+        username = request.form['username']
+        password = request.form['password']
+        email = request.form['email']
+        account = execute_read_query(connection,
+                                     f'SELECT * FROM users WHERE name = {repr(username)} OR password = {repr(email)}')
+        if not account:
+            execute_query(connection,
+                          add_query(table='users', column=('name', 'password', 'email'),
+                                    value=(username, password, email)))
+            return redirect(url_for('users', name=username))
+        else:
+            existing_email = get_email(account)
+            existing_username = get_username(account)
+            if username in existing_username:
+                msg = 'Пользователь с таким именем уже существует'
+            elif email in existing_email:
+                msg = 'Пользователь с такой электронной почтой уже существует'
+    return render_template('register.html', msg=msg)
 
 
 @app.route('/date', methods=['POST', 'GET'])

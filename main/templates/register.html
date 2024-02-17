@@ -6,14 +6,17 @@
 </head>
 <body>
     <h1>Регистрация</h1>
-    <form method="post">
+
+        <form method="post">
         <label for="username">Имя пользователя</label>
-        <input id="username" type="text" name="username">
+        <input id="username" type="text" name="username" placeholder="Введите имя">
         <label for="password">Пароль</label>
-        <input id="password" type="password" name="password">
+        <input id="password" type="password" name="password" placeholder="Введите пароль">
         <label for="email">Электронная почта</label>
-        <input id="email" type="email" name="email">
+        <input id="email" type="email" name="email" placeholder="Введите электронную почту">
         <input type="submit" value="Зарегистрироваться">
-    </form>
+        </form>
+    <h3>{{ msg }}</h3>
+
 </body>
 </html>

@@ -9,6 +9,16 @@ PRICE_OF_POSITION = 3.7
 current_data = date.today()
 
 
+def get_username(acc):
+    res = [i[1] for i in acc]
+    return res
+
+
+def get_email(acc):
+    res = [i[2] for i in acc]
+    return res
+
+
 def change_month_name(month):
     if month[-1] == 'т':
         month = month + 'а'

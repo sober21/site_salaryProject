@@ -28,7 +28,9 @@ def create_connection(path):
     return connection
 
 
-connection = create_connection(r'D:\pythonProjects\PycharmProjects\your_salary_project\main\db_main.sqlite')
+with open('db_path') as path:
+    path = path.read()
+connection = create_connection(fr'{path}')
 
 
 def execute_query(con, query):
@@ -73,7 +75,7 @@ create_salary = f"""
 
 # execute_query(connection, create_salary)
 
-select = 'SELECT * from users'
+select = 'SELECT * from users WHERE name = "dimapolenov" OR email = "dima@mail.ru"'
 users = execute_read_query(connection, select)
 # select_post_description = "SELECT amount FROM salary WHERE id = 2"
 # post_description = execute_read_query(connection, select_post_description)
@@ -89,5 +91,10 @@ WHERE
 # delete_date = f'DELETE FROM salary WHERE id = 2'
 # execute_query(connection, delete_date)
 if __name__ == '__main__':
+    username = 'dimapolenov'
+    email = 'dima@mail.ru'
+    account = execute_read_query(connection,
+                                 fr'SELECT * FROM users WHERE name = {repr(username)} OR email = {repr(email)}')
+    print(account)
     for i in users:
         print(i)
