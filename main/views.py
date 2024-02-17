@@ -37,11 +37,16 @@ def users(name=None):
 @app.route('/login/', methods=['POST', 'GET '])
 @app.route('/login/')
 def login():
+    msg = ''
     if request.method == 'POST':
-        session['username'] = request.form['username']
-        session['password'] = request.form['password']
-        return redirect(url_for('index'))
-    return render_template('login.html', title='Личный кабинет')
+        name = request.form['username']
+        password = request.form['password']
+        account = execute_read_query(connection, f'SELECT * FROM users WHERE name = {repr(name)} AND password = {repr(password)}')
+        if account:
+            return redirect(url_for('users', name=name))
+        else:
+            msg = 'Неправильное имя или пароль'
+    return render_template('login.html', title='Личный кабинет', msg=msg)
 
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -49,12 +54,15 @@ def register():
     if request.method == 'POST':
         if request.form['username'].isalnum():
             session['username'] = request.form['username']
-        elif request.form['password'].isalnum():
-            session['password'] = request.form['password']
-        elif '@' in request.form['email'] and request.form['email'].isalnum():
-            session['email'] = request.form['email']
-        execute_query(connection, add_query(table='users', column=('name', 'email'), value=(session['username'],
-                                                                                            session['email'])))
+
+        session['password'] = request.form['password']
+
+        session['email'] = request.form['email']
+        execute_query(connection,
+                      add_query(table='users', column=('name', 'password', 'email'),
+                                value=(session['username'], session['password'],
+                                       session['email']
+                                       )))
         return redirect(url_for('users', name=session['username']))
     return render_template('register.html')
 
