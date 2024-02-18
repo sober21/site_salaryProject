@@ -5,8 +5,10 @@
     <title>{% block title %}{{ title }}{% endblock title %}</title>
 </head>
 <body>
-    <a href="{{ url_for('index') }}">Домашняя страница</a>
-    <a href="{{ url_for('login') }}">Личный кабинет</a>
+    <a href="{{ url_for('index') }}">Главная</a>
+    <a href="{{ url_for('login') }}">Вход</a>
+    <a href="{{ url_for('register') }}">Регистрация</a>
+    {{ sess }}
     {% block content %}
 
     {% endblock content %}

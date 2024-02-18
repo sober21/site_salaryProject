@@ -11,8 +11,9 @@ app.secret_key = os.urandom(23).hex()
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    if 'username' in session:
-        return redirect(url_for('users', name=session['username']))
+    ses = session.items()
+    if 'username' in session and 'password' in session:
+        return redirect(url_for('dashboard'))
     if request.method == 'POST':
         date = request.form.get('date')
         hours = request.form.get('hours')
@@ -21,9 +22,27 @@ def index():
         salary = salary_of_one_day(hours, positions, mens)
         date = render_date(date)
         res = int(salary)
-        return render_template(r'index.html', cur_date=current_data,
-                               title='Главная страница', date=date, res=res)
-    return render_template(r'index.html', cur_date=current_data, title='Главная страница')
+        return render_template('index.html', cur_date=current_data,
+                               title='Главная страница', date=date, res=res, sess=ses)
+    return render_template('index.html', cur_date=current_data, title='Главная страница', sess=ses)
+
+
+@app.route('/dashboard', methods=['POST', 'GET'])
+def dashboard():
+    ses = session.items()
+    if request.method == 'POST':
+        date = request.form.get('date')
+        hours = request.form.get('hours')
+        positions = request.form.get('positions')
+        mens = request.form.get('mens')
+        salary = salary_of_one_day(hours, positions, mens)
+        create_user_salary = add_query('salary_users', ('username', 'date', 'amount'),
+                                       (session['username'], date, salary))
+        execute_query(connection, create_user_salary)
+        date = render_date(date)
+        res = f'{date}: {int(salary)} руб.'
+        return render_template('dashboard.html', cur_date=current_data, res=res, username=session['username'], sess=ses)
+    return render_template('dashboard.html', cur_date=current_data, title='Добавить', username=session['username'], sess=ses)
 
 
 @app.route('/users/<name>')
@@ -31,23 +50,28 @@ def index():
 def users(name=None):
     if name:
         return render_template('users.html', name=name, title='Личный кабинет')
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 
-@app.route('/login/', methods=['POST', 'GET '])
+@app.route('/login/', methods=['POST', 'GET'])
 @app.route('/login/')
 def login():
+    ses = session.items()
     msg = ''
-    if request.method == 'POST' and 'username' in request.form and 'password' in request.form:
-        name = request.form['username']
+    if 'username' in session and 'password' in session:
+        return redirect(url_for('dashboard', sess=ses))
+    elif request.method == 'POST' and 'username' in request.form and 'password' in request.form:
+        username = request.form['username']
         password = request.form['password']
         account = execute_read_query(connection,
-                                     f'SELECT * FROM users WHERE name = {repr(name)} AND password = {repr(password)}')
+                                     f'SELECT * FROM users WHERE name = "{username}" AND password = "{password}"')
         if account:
-            return redirect(url_for('users', name=name))
+            session['username'] = username
+            session['password'] = password
+            return redirect(url_for('dashboard', sess=ses))
         else:
             msg = 'Неправильное имя или пароль'
-    return render_template('login.html', title='Личный кабинет', msg=msg)
+    return render_template('login.html', title='Личный кабинет', msg=msg, sess=ses)
 
 
 @app.route('/register', methods=['POST', 'GET'])
@@ -58,12 +82,14 @@ def register():
         password = request.form['password']
         email = request.form['email']
         account = execute_read_query(connection,
-                                     f'SELECT * FROM users WHERE name = {repr(username)} OR password = {repr(email)}')
+                                     f'SELECT * FROM users WHERE name = "{username}" OR email = "{email}"')
         if not account:
+            session['username'] = username
+            session['password'] = password
             execute_query(connection,
                           add_query(table='users', column=('name', 'password', 'email'),
                                     value=(username, password, email)))
-            return redirect(url_for('users', name=username))
+            return redirect(url_for('dashboard'))
         else:
             existing_email = get_email(account)
             existing_username = get_username(account)

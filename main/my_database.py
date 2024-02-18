@@ -1,5 +1,6 @@
 import sqlite3
 from sqlite3 import Error
+from main.main import render_date
 
 
 def delete_query(table, column, value):
@@ -56,12 +57,12 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-create_salary_table = """
-CREATE TABLE IF NOT EXISTS users (
+create_user_salary_table = """
+CREATE TABLE IF NOT EXISTS salary_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT,
-  password TEXT,
-  email TEXT
+  username TEXT,
+  date TEXT,
+  amount TEXT
 );
 """
 
@@ -91,10 +92,6 @@ WHERE
 # delete_date = f'DELETE FROM salary WHERE id = 2'
 # execute_query(connection, delete_date)
 if __name__ == '__main__':
-    username = 'dimapolenov'
-    email = 'dima@mail.ru'
-    account = execute_read_query(connection,
-                                 fr'SELECT * FROM users WHERE name = {repr(username)} OR email = {repr(email)}')
-    print(account)
-    for i in users:
-        print(i)
+    misha = execute_read_query(connection, 'SELECT * FROM salary_users WHERE username = "misha"')
+    for i in misha:
+        print(render_date(i[2]))
