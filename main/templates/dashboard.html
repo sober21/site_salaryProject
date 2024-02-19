@@ -10,6 +10,7 @@
 <body>
   {% block content %}
     <h1>Вы вошли как {{ username }}</h1>
+    <a href="{{ url_for('logout') }}">Выход</a>
     <form action="" method="post">
         <label for="hours">Количество часов:</label>
             <input type="number" id="hours" name="hours" min="1" max="12" value="9">

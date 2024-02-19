@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from main.main import current_data, salary_of_one_day, render_date, get_email, get_username
+from main.app import current_data, salary_of_one_day, render_date, get_email, get_username
 from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
 import os
 
@@ -72,6 +72,13 @@ def login():
         else:
             msg = 'Неправильное имя или пароль'
     return render_template('login.html', title='Личный кабинет', msg=msg, sess=ses)
+
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    session.pop('password', None)
+    return redirect(url_for('login'))
 
 
 @app.route('/register', methods=['POST', 'GET'])
