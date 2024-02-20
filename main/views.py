@@ -1,7 +1,9 @@
+import os
+
 from flask import Flask, render_template, request, redirect, url_for, session
+
 from main.app import current_data, salary_of_one_day, render_date, get_email, get_username
 from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
-import os
 
 app = Flask(__name__)
 
@@ -31,18 +33,24 @@ def index():
 def dashboard():
     ses = session.items()
     if request.method == 'POST':
-        date = request.form.get('date')
-        hours = request.form.get('hours')
-        positions = request.form.get('positions')
-        mens = request.form.get('mens')
-        salary = salary_of_one_day(hours, positions, mens)
-        create_user_salary = add_query('salary_users', ('username', 'date', 'amount'),
-                                       (session['username'], date, salary))
-        execute_query(connection, create_user_salary)
-        date = render_date(date)
-        res = f'{date}: {int(salary)} руб.'
+        res = None
+        if 'get_salary' in request.form:
+            res = execute_read_query(connection,
+                                     f'SELECT date,salary FROM salary_users WHERE username = "{session["username"]}"')
+        elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form and 'mens' in request.form:
+            date = request.form.get('date')
+            hours = request.form.get('hours')
+            positions = request.form.get('positions')
+            mens = request.form.get('mens')
+            salary = salary_of_one_day(hours, positions, mens)
+            create_user_salary = add_query('salary_users', ('username', 'date', 'salary'),
+                                           (session['username'], date, salary))
+            execute_query(connection, create_user_salary)
+            date = render_date(date)
+            res = f'{date}: {int(salary)} руб.'
         return render_template('dashboard.html', cur_date=current_data, res=res, username=session['username'], sess=ses)
-    return render_template('dashboard.html', cur_date=current_data, title='Добавить', username=session['username'], sess=ses)
+    return render_template('dashboard.html', cur_date=current_data, title='Добавить', username=session['username'],
+                           sess=ses)
 
 
 @app.route('/users/<name>')
@@ -64,7 +72,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         account = execute_read_query(connection,
-                                     f'SELECT * FROM users WHERE name = "{username}" AND password = "{password}"')
+                                     f'SELECT * FROM users WHERE username = "{username}" AND password = "{password}"')
         if account:
             session['username'] = username
             session['password'] = password
@@ -89,12 +97,12 @@ def register():
         password = request.form['password']
         email = request.form['email']
         account = execute_read_query(connection,
-                                     f'SELECT * FROM users WHERE name = "{username}" OR email = "{email}"')
+                                     f'SELECT * FROM users WHERE username = "{username}" OR email = "{email}"')
         if not account:
             session['username'] = username
             session['password'] = password
             execute_query(connection,
-                          add_query(table='users', column=('name', 'password', 'email'),
+                          add_query(table='users', column=('username', 'password', 'email'),
                                     value=(username, password, email)))
             return redirect(url_for('dashboard'))
         else:

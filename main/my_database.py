@@ -37,7 +37,7 @@ def create_connection(db_dir):
     return connection
 
 
-with open('db_path') as path:
+with open('db_path.txt') as path:
     path = path.read()
 connection = create_connection(fr'{path}')
 
@@ -65,7 +65,7 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-create_user_salary_table = """
+create_salary_users_table = """
 CREATE TABLE IF NOT EXISTS salary_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT,
@@ -103,6 +103,4 @@ WHERE
 if __name__ == '__main__':
     # print(execute_read_query(connection, 'SELECT date,amount FROM salary_users WHERE username = "misha"'))
     # get_date_and_salary('misha', 'date', 'amount')
-    misha = execute_read_query(connection, 'SELECT date, salary, hours FROM salary_users WHERE username = "misha"')
-    for i in misha:
-        print(i)
+    execute_query(connection, 'ALTER TABLE users RENAME COLUMN name TO username')

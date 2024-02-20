@@ -21,6 +21,9 @@
             <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
             <input type="submit" value="Добавить">
     </form>
+    <form method="post">
+        <input type="submit" name="get_salary" value="Показать">
+    </form>
     {% if res %}
     {{res}}
     {% endif %}
