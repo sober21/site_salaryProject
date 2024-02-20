@@ -19,6 +19,11 @@ def get_email(acc):
     return res
 
 
+def convert_salary_and_date(array):
+    for dt, hours, salary in array:
+        yield render_date(dt), hours, f'{int(float(salary))} руб'
+
+
 def change_month_name(month):
     if month[-1] == 'т':
         month = month + 'а'

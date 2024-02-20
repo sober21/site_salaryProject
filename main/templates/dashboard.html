@@ -6,27 +6,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Посчитать и добавить</title>
+
 </head>
 <body>
-  {% block content %}
-    <h1>Вы вошли как {{ username }}</h1>
-    <a href="{{ url_for('logout') }}">Выход</a>
-    <form action="" method="post">
-        <label for="hours">Количество часов:</label>
-            <input type="number" id="hours" name="hours" min="1" max="12" value="9">
-        <label for="positions">Количество позиций:</label>
-            <input type="number" name="positions" id="positions" min="1" value="1">
-        <label for="mens">Количество человек:</label>
-            <input type="number" name="mens" id="mens" min="1" value="3">
-            <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
-            <input type="submit" value="Добавить">
-    </form>
-    <form method="post">
-        <input type="submit" name="get_salary" value="Показать">
-    </form>
-    {% if res %}
-    {{res}}
+{% block content %}
+<h1>Вы вошли как {{ username }}</h1>
+<a href="{{ url_for('logout') }}">Выход</a>
+<form action="" method="post">
+    <label for="hours">Количество часов:</label>
+    <input type="number" id="hours" name="hours" min="1" max="12" value="9">
+    <label for="positions">Количество позиций:</label>
+    <input type="number" name="positions" id="positions" min="1" value="1">
+    <label for="mens">Количество человек:</label>
+    <input type="number" name="mens" id="mens" min="1" value="3">
+    <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
+    <input type="submit" value="Добавить">
+</form>
+<form method="post">
+    <input type="submit" name="get_salary" value="Показать">
+</form>
+<table>
+    {% if sal_data %}
+    <tr>
+        <th>Дата</th>
+        <th>Часы</th>
+        <th>Сумма</th>
+    </tr>
+    {% for i in sal_data %}
+    <tr>
+        <td>{{ i[0] }}</td>
+        <td>{{ i[1] }}</td>
+        <td>{{ i[2] }}</td>
+    </tr>
+    {% endfor %}
+
     {% endif %}
+</table>
+{% if sal_today %}
+{{sal_today}}
+{% endif %}
 {% endblock content %}
 </body>
 </html>
