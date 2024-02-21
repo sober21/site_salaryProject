@@ -22,9 +22,18 @@
     <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
     <input type="submit" value="Добавить">
 </form>
-<form method="post">
+<table>
+<tr><td><form method="post">
     <input type="submit" name="get_salary" value="Показать">
-</form>
+</form></td>
+<td><form method="post">
+    <input type="submit" name="get_week" value="Эта неделя">
+</form></td>
+<td><form method="post">
+    <input type="submit" name="get_month" value="Этот месяц">
+</form></td>
+</tr>
+</table>
 <table>
     {% if sal_data %}
     <tr>

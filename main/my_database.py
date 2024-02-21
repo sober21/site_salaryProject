@@ -1,7 +1,22 @@
+from datetime import datetime, date, timedelta
 import sqlite3
 from sqlite3 import Error
 
 from main.app import render_date
+
+current_data = date.today()
+
+
+def first_day_week(cur_date) -> str:
+    # Возвращает первую день текущей недели
+    cur_weekday = cur_date.isoweekday()
+    if cur_weekday == 1:
+        return cur_date.strftime('%Y-%m-%d')
+    else:
+        while True:
+            cur_date = cur_date - timedelta(days=1)
+            if cur_date.isoweekday() == 1:
+                return cur_date.strftime('%Y-%m-%d')
 
 
 def get_date_and_salary(user, *args):
@@ -23,7 +38,12 @@ def select_query(table, column, column1, value):
 
 def add_query(table, column, value):
     '''Создаёт запрос на вставку'''
-    return f'INSERT INTO {table} {column} VALUES {value};'
+    return f'REPLACE INTO {table} {column} VALUES {value};'
+
+
+def valid_duplicate(dt):
+    # Проверяет, если в бд запись с той же датой
+    query = f'SELECT date FROM salary_users'
 
 
 def create_connection(db_dir):
@@ -69,8 +89,9 @@ create_salary_users_table = """
 CREATE TABLE IF NOT EXISTS salary_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT,
-  date TEXT,
-  amount TEXT
+  date TEXT UNIQUE,
+  salary INTEGER,
+  hours INTEGER
 );
 """
 
@@ -81,8 +102,26 @@ create_salary = f"""
           ('2024-02-13', '1000')
           ;
         """
+# Удаление таблицы
+# execute_query(connection, 'DROP TABLE salary_users')
 
-# execute_query(connection, create_salary)
+# Все таблицы в базе
+# table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')# все таблицы
+# for i in table:
+#     print(i)
+
+# Все данные в таблице
+# salary_users = execute_read_query(connection, 'SELECT * FROM salary_users')
+# for i in salary_users:
+#     print(i)
+
+# Работа с датой
+# SELECT * FROM table WHERE date_column BETWEEN '2021-01-01' and '2021-12-31' #выбрать данные между двумя датами
+# SELECT * FROM table WHERE DATE(date_column) = DATE('now','-1 day');  #выбрать данные созданные вчера
+# SELECT * FROM table WHERE time_column > '12:00:00';  #выбрать данные созданные после определённой даты
+# SELECT * FROM table WHERE strftime('%m',date_column) = '04';  #выбрать данные в определённом месяце
+# SELECT * FROM table_name ORDER BY datetime_column DESC;  #сортировка в порядке убывания
+
 
 # select = 'SELECT * from users WHERE name = "dimapolenov" OR email = "dima@mail.ru"'
 # users = execute_read_query(connection, select)
@@ -103,4 +142,10 @@ WHERE
 if __name__ == '__main__':
     # print(execute_read_query(connection, 'SELECT date,amount FROM salary_users WHERE username = "misha"'))
     # get_date_and_salary('misha', 'date', 'amount')
-    execute_query(connection, 'ALTER TABLE users RENAME COLUMN name TO username')
+
+    first_day = first_day_week(current_data)
+    sal_data = execute_read_query(connection,
+                                  f'SELECT date, hours, salary FROM salary_users WHERE username = "dimapolenov" and '
+                                  f'strftime("%m", date) >= strftime("%m", "now") ORDER BY date DESC')
+    for i in sal_data:
+        print(i)

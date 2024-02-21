@@ -3,7 +3,8 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session
 
 from main.app import current_data, salary_of_one_day, render_date, get_email, get_username, convert_salary_and_date
-from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query
+from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query, \
+    first_day_week
 
 app = Flask(__name__)
 
@@ -34,7 +35,20 @@ def dashboard():
         sal_today, sal_data = None, None
         if 'get_salary' in request.form:
             sal_data = execute_read_query(connection,
-                                          f'SELECT date,hours,salary FROM salary_users WHERE username = "{session["username"]}"')
+                                          f'SELECT date,hours,salary FROM salary_users WHERE '
+                                          f'username = "{session["username"]}" ORDER BY date ASC')
+            sal_data = convert_salary_and_date(sal_data)
+        elif 'get_week' in request.form:
+            first_day = first_day_week(current_data)
+            sal_data = execute_read_query(connection, f'SELECT date, hours, salary FROM salary_users WHERE '
+                                                      f'username = "{session["username"]}" and date >= "{first_day}" '
+                                                      f'ORDER BY date ASC')
+            sal_data = convert_salary_and_date(sal_data)
+        elif 'get_month' in request.form:
+            sal_data = execute_read_query(connection, f'SELECT date, hours, salary FROM salary_users '
+                                                      f'WHERE username = "{session["username"]}" and '
+                                                      f'strftime("%m", date) >= strftime("%m", "now") '
+                                                      f'ORDER BY date ASC')
             sal_data = convert_salary_and_date(sal_data)
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form and 'mens' in request.form:
             date = request.form.get('date')

@@ -33,6 +33,7 @@ def change_month_name(month):
 
 
 def render_date(dt: str) -> str:
+    #Преобразует дату в нужный формат. Из '2022-02-12' получается '12 февраля'
     my_date = datetime.strptime(dt, '%Y-%m-%d')
     my_date = my_date.strftime('%d %B')
     day, month = my_date.split()[0], change_month_name(my_date.split()[-1])
