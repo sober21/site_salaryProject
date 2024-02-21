@@ -47,7 +47,13 @@
         <td>{{ i[1] }}</td>
         <td>{{ i[2] }}</td>
     </tr>
+
     {% endfor %}
+    <tr>
+        <th>Всего</th>
+        <td>{{ sum[0][1] }}</td>
+        <td>{{ sum[0][0] }} руб</td>
+    </tr>
 
     {% endif %}
 </table>

@@ -44,7 +44,7 @@ def render_date(dt: str) -> str:
 def salary_of_one_day(h, pos, emp) -> int | float:
     # Считает зарплату за один день и возвращает число
     salary = int(h) * PRICE_OF_HOUR + (int(pos) / int(emp)) * PRICE_OF_POSITION
-    return salary
+    return int(salary)
 
 
 def get_last_date(file: str) -> datetime:

@@ -105,6 +105,9 @@ create_salary = f"""
 # Удаление таблицы
 # execute_query(connection, 'DROP TABLE salary_users')
 
+# Удаление всех данных из таблицы
+# execute_query(connection, 'DELETE FROM salary_users')
+
 # Все таблицы в базе
 # table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')# все таблицы
 # for i in table:
@@ -143,9 +146,7 @@ if __name__ == '__main__':
     # print(execute_read_query(connection, 'SELECT date,amount FROM salary_users WHERE username = "misha"'))
     # get_date_and_salary('misha', 'date', 'amount')
 
-    first_day = first_day_week(current_data)
+    # first_day = first_day_week(current_data)
     sal_data = execute_read_query(connection,
-                                  f'SELECT date, hours, salary FROM salary_users WHERE username = "dimapolenov" and '
-                                  f'strftime("%m", date) >= strftime("%m", "now") ORDER BY date DESC')
-    for i in sal_data:
-        print(i)
+                                  f'SELECT SUM(salary) FROM salary_users WHERE username = "dimapolenov"')
+    print(sal_data[0][0])

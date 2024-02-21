@@ -32,23 +32,31 @@ def index():
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
     if request.method == 'POST':
-        sal_today, sal_data = None, None
+        sal_today, sal_data, sum_of_period = None, None, None
         if 'get_salary' in request.form:
             sal_data = execute_read_query(connection,
                                           f'SELECT date,hours,salary FROM salary_users WHERE '
                                           f'username = "{session["username"]}" ORDER BY date ASC')
+            sum_of_period = execute_read_query(connection, f'SELECT SUM(salary), SUM(hours) FROM salary_users WHERE '
+                                                           f'username = "{session["username"]}"')
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_week' in request.form:
             first_day = first_day_week(current_data)
             sal_data = execute_read_query(connection, f'SELECT date, hours, salary FROM salary_users WHERE '
                                                       f'username = "{session["username"]}" and date >= "{first_day}" '
                                                       f'ORDER BY date ASC')
+            sum_of_period = execute_read_query(connection, f'SELECT SUM(salary), SUM(hours) FROM salary_users WHERE '
+                                                           f'username = "{session["username"]}" and date >= "{first_day}"')
+
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_month' in request.form:
             sal_data = execute_read_query(connection, f'SELECT date, hours, salary FROM salary_users '
                                                       f'WHERE username = "{session["username"]}" and '
                                                       f'strftime("%m", date) >= strftime("%m", "now") '
                                                       f'ORDER BY date ASC')
+            sum_of_period = execute_read_query(connection, f'SELECT SUM(salary),SUM(hours) FROM salary_users '
+                                                           f'WHERE username = "{session["username"]}" and '
+                                                           f'strftime("%m", date) >= strftime("%m", "now")')
             sal_data = convert_salary_and_date(sal_data)
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form and 'mens' in request.form:
             date = request.form.get('date')
@@ -62,7 +70,7 @@ def dashboard():
             date = render_date(date)
             sal_today = f'{date}: {int(salary)} руб.'
         return render_template('dashboard.html', cur_date=current_data, sal_data=sal_data, sal_today=sal_today,
-                               username=session['username'])
+                               sum=sum_of_period, username=session['username'])
     return render_template('dashboard.html', cur_date=current_data, title='Добавить', username=session['username'])
 
 
