@@ -147,6 +147,12 @@ if __name__ == '__main__':
     # get_date_and_salary('misha', 'date', 'amount')
 
     # first_day = first_day_week(current_data)
-    sal_data = execute_read_query(connection,
-                                  f'SELECT SUM(salary) FROM salary_users WHERE username = "dimapolenov"')
-    print(sal_data[0][0])
+    execute_query(connection, f'CREATE TABLE IF NOT EXISTS employees ('
+                              f'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                              f'username TEXT NOT NULL,'
+                              f'name TEXT NOT NULL,'
+                              f'job_title TEXT NOT NULL,'
+                              f'workplace TEXT NOT NULL,'
+                              f'hour_price INTEGER NOT NULL,'
+                              f'position_price1 INTEGER NOT NULL,'
+                              f'position_price2 INTEGER NOT NULL)')

@@ -31,6 +31,9 @@ def index():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
+    anketa = execute_read_query(connection, f'SELECT username FROM employees WHERE username = {session["username"]}')
+    if not anketa:
+        return render_template('data_employees.html')
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_salary' in request.form:
