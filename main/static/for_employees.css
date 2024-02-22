@@ -1,0 +1,15 @@
+.field {
+    text-align: right;
+    line-height: 25px;
+
+}
+label {
+    float: left;
+    padding-right: 10px;
+}
+select {
+    width: 170px
+}
+.main{
+    float: left;
+}

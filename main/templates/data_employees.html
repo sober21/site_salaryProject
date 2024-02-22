@@ -3,22 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>Анкета</title>
+    <link href="static/for_employees.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<table>
-  <tr>
-    <td>
-      <input type="text" id="workplace" placeholder="Выберите отдел">
-      <label for="workplace">Отдел</label>
-    </td>
-    <td>
-      <input type="text" id="job_title" placeholder="Введите должность">
+<h2>Заполните анкету</h2>
+<form method="post">
+  <div class="main">
+    <div class="field">
+      <label for="name">Имя</label>
+      <input type="text" id="name" required placeholder="Введите имя">
+    </div>
+    <div class="field">
+      <label for="hour_price">Оплата за 1 час</label>
+      <input type="number" value="89" id="hour_price" placeholder="Стоимость 1 часа" required>
+    </div>
+    <div class="field">
+      <label for="position_price1">Отбор</label>
+      <input type="number" step="0.1" value="3" id="position_price1" placeholder="Стоимость 1 позиции" required>
+    </div>
+    <div class="field">
+      <label for="position_price2">Приход</label>
+      <input type="number" step="0.1" value="7" id="position_price2" placeholder="Стоимость 1 позиции" required>
+    </div>
+    <div class="field">
       <label for="job_title">Должность</label>
-    </td>
-    <td>
-      <input type="checkbox" value="1 отдел" v>
-    </td>
-  </tr>
-</table>
+      <select id="job_title" required>
+        <option disabled>Выберите должность</option>
+        <option value="Упаковщик">Упаковщик</option>
+        <option value="Пом.кладовщика">Пом.кладовщика</option>
+        <option value="Кладовщик">Кладовщик</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="workplace">Отдел</label>
+      <select id="workplace" required>
+        <option disabled>Выберите отдел</option>
+        <option value="1 отдел">1 отдел</option>
+        <option value="3 отдел">3 отдел</option>
+        <option value="Упаковка">Упаковка</option>
+        <option value="Магазины">Магазины</option>
+      </select>
+    </div>
+    <div class="field">
+      <button type="submit">Отправить</button>
+    </div>
+  </div>
+
+</form>
 </body>
 </html>
