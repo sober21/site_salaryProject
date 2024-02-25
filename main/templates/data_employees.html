@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,20 +7,17 @@
     <title>Анкета</title>
 </head>
 <body>
-<table>
-  <tr>
-    <td>
-      <input type="text" id="workplace" placeholder="Выберите отдел">
+{% block content %}
+<div>
       <label for="workplace">Отдел</label>
-    </td>
-    <td>
-      <input type="text" id="job_title" placeholder="Введите должность">
+      <input type="text" id="workplace" placeholder="Выберите отдел">
+
+</div>
+<div>
       <label for="job_title">Должность</label>
-    </td>
-    <td>
-      <input type="checkbox" value="1 отдел" v>
-    </td>
-  </tr>
-</table>
+      <input type="text" id="job_title" placeholder="Введите должность">
+
+</div>
+{% endblock %}
 </body>
 </html>

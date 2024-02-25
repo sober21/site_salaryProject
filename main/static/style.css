@@ -1,5 +1,9 @@
-html {
-  font-family: sans-serif;
+html,body {
+  display: grid;
+  height: 100%;
+  width: 100%;
+  place-items: center;
+  background: #87CEEB;
 }
 
 h1 {

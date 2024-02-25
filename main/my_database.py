@@ -2,6 +2,8 @@ from datetime import datetime, date, timedelta
 import sqlite3
 from sqlite3 import Error
 
+from werkzeug.security import generate_password_hash, check_password_hash
+
 from main.app import render_date
 
 current_data = date.today()
@@ -147,12 +149,15 @@ if __name__ == '__main__':
     # get_date_and_salary('misha', 'date', 'amount')
 
     # first_day = first_day_week(current_data)
-    execute_query(connection, f'CREATE TABLE IF NOT EXISTS employees ('
-                              f'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-                              f'username TEXT NOT NULL,'
-                              f'name TEXT NOT NULL,'
-                              f'job_title TEXT NOT NULL,'
-                              f'workplace TEXT NOT NULL,'
-                              f'hour_price INTEGER NOT NULL,'
-                              f'position_price1 INTEGER NOT NULL,'
-                              f'position_price2 INTEGER NOT NULL)')
+    # execute_query(connection, f'CREATE TABLE IF NOT EXISTS employees ('
+    #                           f'id INTEGER PRIMARY KEY AUTOINCREMENT,'
+    #                           f'username TEXT NOT NULL,'
+    #                           f'name TEXT NOT NULL,'
+    #                           f'job_title TEXT NOT NULL,'
+    #                           f'workplace TEXT NOT NULL,'
+    #                           f'hour_price INTEGER NOT NULL,'
+    #                           f'position_price1 INTEGER NOT NULL,'
+    #                           f'position_price2 INTEGER NOT NULL)')
+    users = execute_read_query(connection, 'SELECT password FROM users WHERE username = "misha"')
+    print(users)
+    print(check_password_hash(users[0][0], '12345'))
