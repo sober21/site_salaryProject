@@ -59,3 +59,4 @@ if __name__ == '__main__':
     assert (is_valid_email('почта@mail.ru')) == False
     assert (is_valid_email('sahsa@mail.ру')) == False
     assert (is_valid_email('sahsa@мэйл.ru')) == False
+
