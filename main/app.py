@@ -14,6 +14,7 @@ def get_username(acc):
     res = [i[1] for i in acc]
     return res
 
+
 def is_latins_letters(word: str) -> bool:
     # Проверяет, что все буквенные символы в слове - латинские
     chars = ascii_lowercase + ascii_uppercase
@@ -24,6 +25,8 @@ def is_latins_letters(word: str) -> bool:
             else:
                 return False
     return True
+
+
 def is_valid_username(username: str) -> bool:
     # Проверяет правильность имени пользователя(не менее 4 символов, обязательно 1 латинская буква(можно цифры,
     # нижнее подчёркивание), без пробелов)
@@ -44,52 +47,13 @@ def is_valid_password(password: str) -> bool:
 def is_valid_email(email: str) -> bool:
     # Проверяет правильность электронной почты(латинские буквы, цифры, 1 символ "@", 1 символ ".", начинается не с "@" или
     # другого знака препинания, наличие букв между символами "@" и ".")
-    if email.count('@') == 1 and email.count('.') == 1 and email.index('@') < email.index('.') and email.replace(' ', '') == email:
+    if email.count('@') == 1 and email.count('.') == 1 and email.index('@') < email.index('.') and email.replace(' ',
+                                                                                                                 '') == email:
         mail_domen = email.split('@')[1].split('.')[0]
         high_domen = email.split('.')[1]
         mail_name = email.split('@')[0]
-        if mail_domen.isalnum() and not mail_domen.isdigit() and len(mail_domen) > 1 and mail_name.replace('_', '').isalnum() and \
-                not mail_name.replace('_', '').isdigit() and high_domen.isalpha() and 4 > len(high_domen) > 1:
-            if is_latins_letters(email):
-                return True
-    return False
-
-
-def is_latins_letters(word: str) -> bool:
-    # Проверяет, что все буквенные символы в слове - латинские
-    chars = ascii_lowercase + ascii_uppercase
-    for char in word:
-        if char.isalpha():
-            if char in chars:
-                continue
-            else:
-                return False
-    return True
-def is_valid_username(username: str) -> bool:
-    # Проверяет правильность имени пользователя(не менее 4 символов, обязательно 1 латинская буква(можно цифры,
-    # нижнее подчёркивание), без пробелов)
-    if len(username) >= 4 and not username.replace('_', '').isdigit() and username.replace('_', '').isalnum():
-        if is_latins_letters(username):
-            return True
-    return False
-
-
-def is_valid_password(password: str) -> bool:
-    # Проверяет правильность пароля(не менее 8 символов, латинские буквы, цифры, знаки, без пробелов)
-    if len(password) >= 8 and password.isprintable() and password.replace(' ', '') == password:
-        if is_latins_letters(password):
-            return True
-    return False
-
-
-def is_valid_email(email: str) -> bool:
-    # Проверяет правильность электронной почты(латинские буквы, цифры, 1 символ "@", 1 символ ".", начинается не с "@" или
-    # другого знака препинания, наличие букв между символами "@" и ".")
-    if email.count('@') == 1 and email.count('.') == 1 and email.index('@') < email.index('.') and email.replace(' ', '') == email:
-        mail_domen = email.split('@')[1].split('.')[0]
-        high_domen = email.split('.')[1]
-        mail_name = email.split('@')[0]
-        if mail_domen.isalnum() and not mail_domen.isdigit() and len(mail_domen) > 1 and mail_name.replace('_', '').isalnum() and \
+        if mail_domen.isalnum() and not mail_domen.isdigit() and len(mail_domen) > 1 and mail_name.replace('_',
+                                                                                                           '').isalnum() and \
                 not mail_name.replace('_', '').isdigit() and high_domen.isalpha() and 4 > len(high_domen) > 1:
             if is_latins_letters(email):
                 return True
