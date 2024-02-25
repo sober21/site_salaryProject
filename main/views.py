@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask, render_template, request, redirect, url_for, session
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from main.app import current_data, salary_of_one_day, render_date, get_email, get_username, convert_salary_and_date
 from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query, \
@@ -87,8 +88,8 @@ def login():
         username = request.form['username']
         password = request.form['password']
         account = execute_read_query(connection,
-                                     f'SELECT * FROM users WHERE username = "{username}" AND password = "{password}"')
-        if account:
+                                     f'SELECT password FROM users WHERE username = "{username}"')
+        if check_password_hash(account[0][0], password):
             session['username'] = username
             session['password'] = password
             return redirect(url_for('dashboard'))
@@ -114,8 +115,10 @@ def register():
         account = execute_read_query(connection,
                                      f'SELECT * FROM users WHERE username = "{username}" OR email = "{email}"')
         if not account:
+
             session['username'] = username
             session['password'] = password
+            password = generate_password_hash(password)
             execute_query(connection,
                           add_query(table='users', column=('username', 'password', 'email'),
                                     value=(username, password, email)))

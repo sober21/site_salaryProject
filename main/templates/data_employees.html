@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +8,20 @@
     <link href="static/for_employees.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+
+{% block content %}
+<div>
+      <label for="workplace">Отдел</label>
+      <input type="text" id="workplace" placeholder="Выберите отдел">
+
+</div>
+<div>
+      <label for="job_title">Должность</label>
+      <input type="text" id="job_title" placeholder="Введите должность">
+
+</div>
+{% endblock %}
+ 
 <h2>Заполните анкету</h2>
 <form method="post">
   <div class="main">
@@ -50,5 +66,6 @@
   </div>
 
 </form>
+
 </body>
 </html>
