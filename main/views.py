@@ -3,8 +3,9 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from main.app import current_data, salary_of_one_day, render_date, get_email, get_username, convert_salary_and_date
-from main.my_database import execute_query, connection, delete_query, add_query, select_query, execute_read_query, \
+from main.app import current_data, salary_of_one_day, render_date, get_email, get_username, convert_salary_and_date, \
+    valid_register_data
+from main.my_database import execute_query, connection, add_query, execute_read_query, \
     first_day_week
 
 app = Flask(__name__)
@@ -32,19 +33,24 @@ def index():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
-    anketa = execute_read_query(connection, f'SELECT username FROM employees WHERE username = {session["username"]}')
+    anketa = execute_read_query(connection, f'SELECT username FROM employees WHERE username = "{session["username"]}"')
     if not anketa:
-        return render_template('data_employees.html')
+        return render_template('data_employees.html', ses=session['username'])
     if request.method == 'POST':
-        if all([request.form['name'], request.form['hour_price'], request.form['position_price'],
-                request.form['job_title'], request.form['workplace']]):
-            name, hour_price, position_price, job_title, workplace = request.form['name'], request.form['hour_price'], \
-                request.form['position_price'], request.form['job_title'], request.form['workplace']
-            execute_query(connection, add_query(table='employees', column=('name', 'hour_price', 'position_price',
-                                                                           'job_title', 'workplace'),
-                          value=(name, hour_price, position_price, job_title, workplace)))
-            return redirect(url_for('dashboard'))
+        try:
+            if all([request.form['name'], request.form['hour_price'], request.form['position_price'],
+                    request.form['job_title'], request.form['workplace']]):
+                name, hour_price, position_price, job_title, workplace = request.form['name'], request.form[
+                    'hour_price'], \
+                    request.form['position_price'], request.form['job_title'], request.form['workplace']
+                execute_query(connection,
+                              f'insert into employees (username, name, job_title, workplace, hour_price, position_price) '
+                              f'values ("{session["username"]}", "{name}", "{job_title}", "{workplace}", {hour_price}, {position_price})')
 
+                return redirect(url_for('dashboard'))
+        except KeyError:
+            pass
+        print(session['username'])
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_salary' in request.form:
             sal_data = execute_read_query(connection,
@@ -124,14 +130,16 @@ def register():
         account = execute_read_query(connection,
                                      f'SELECT * FROM users WHERE username = "{username}" OR email = "{email}"')
         if not account:
-
-            session['username'] = username
-            session['password'] = password
-            password = generate_password_hash(password)
-            execute_query(connection,
-                          add_query(table='users', column=('username', 'password', 'email'),
-                                    value=(username, password, email)))
-            return redirect(url_for('dashboard'))
+            if valid_register_data(username, password, email):
+                session['username'] = username
+                session['password'] = password
+                password = generate_password_hash(password)
+                execute_query(connection,
+                              add_query(table='users', column=('username', 'password', 'email'),
+                                        value=(username, password, email)))
+                return redirect(url_for('dashboard'))
+            else:
+                msg = 'Имя пользователя должно быть не менее 4 символов. Только латинские буквы, цифры, нижнее подчёркивание.\n Пароль не менее 8 символов'
         else:
             existing_email = get_email(account)
             existing_username = get_username(account)

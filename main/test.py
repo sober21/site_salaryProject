@@ -1,4 +1,4 @@
-from app import is_valid_password, is_valid_username, is_valid_email
+from app import is_valid_password, is_valid_username, is_valid_email, valid_register_data
 
 if __name__ == '__main__':
     # Тесты на правильность имени пользователя
@@ -57,3 +57,15 @@ if __name__ == '__main__':
     assert (is_valid_email('почта@mail.ru')) == False
     assert (is_valid_email('sahsa@mail.ру')) == False
     assert (is_valid_email('sahsa@мэйл.ru')) == False
+
+    # Тесты на проверку всех данных регистрации
+    assert valid_register_data('sasha', '1123456678', 'sasha@mail.ru') == True
+    assert valid_register_data('sashaп', '1123456678', 'sasha@mail.ru') == False
+    assert valid_register_data('sasha', '1123456678', 'sa!sha@mail.ru') == False
+    assert valid_register_data('sasha', '1123456678', 'sasha.mail@ru') == False
+    assert valid_register_data('sasha', '1123456678', 'sas@ha@mail.ru') == False
+    assert valid_register_data('sasha', '1123456678', 'sashamail.ru') == False
+    assert valid_register_data('sashaERWER', '1123456678', 'sasha@mail.ru') == True
+    assert valid_register_data('sash_a', '11_*&%^23456678', 'sasha@mail.ru') == True
+    assert valid_register_data('sasha', '11234566 78', 'sasha@mail.ru') == False
+    assert valid_register_data('sasha', '1123456678', 'sasha@mailru') == False

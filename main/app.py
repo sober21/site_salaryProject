@@ -15,6 +15,10 @@ def get_username(acc):
     return res
 
 
+def valid_register_data(username, password, email):
+    return all((is_valid_username(username), is_valid_password(password), is_valid_email(email)))
+
+
 def is_latins_letters(word: str) -> bool:
     # Проверяет, что все буквенные символы в слове - латинские
     chars = ascii_lowercase + ascii_uppercase

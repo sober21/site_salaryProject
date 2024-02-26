@@ -28,24 +28,9 @@ def get_date_and_salary(user, *args):
         print(f'{render_date(date)}: {int(float(salary))} руб.')
 
 
-def delete_query(table, column, value):
-    '''Создаёт запрос на удаление'''
-    return f'DELETE FROM {table} WHERE {column} = {value}'
-
-
-def select_query(table, column, column1, value):
-    '''Создаёт запрос на удаление'''
-    return f'SELECT {column} FROM {table} WHERE {column1} = {value}'
-
-
 def add_query(table, column, value):
     '''Создаёт запрос на вставку'''
     return f'REPLACE INTO {table} {column} VALUES {value};'
-
-
-def valid_duplicate(dt):
-    # Проверяет, если в бд запись с той же датой
-    query = f'SELECT date FROM salary_users'
 
 
 def create_connection(db_dir):
@@ -149,5 +134,14 @@ if __name__ == '__main__':
     # get_date_and_salary('misha', 'date', 'amount')
 
     # first_day = first_day_week(current_data)
-    execute_query(connection, 'CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL,name TEXT NOT NULL,job_title TEXT NOT NULL,workplace TEXT NOT NULL,hour_price INTEGER NOT NULL,position_price1 INTEGER NOT NULL)')
-
+    # execute_query(connection,
+    #               'CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL,'
+    #               'name TEXT NOT NULL,job_title TEXT NOT NULL,workplace TEXT NOT NULL,hour_price INTEGER NOT NULL,'
+    #               'position_price INTEGER NOT NULL)')
+    # execute_query(connection,
+    #               'insert into employees (username, name, job_title, workplace, hour_price, position_price) '
+    #               'values ("aniskin", "Сергун", "упаковщик", "упаковка", 3, 91)')
+    us = execute_read_query(connection, 'select * from employees')
+    print(us)
+    anketa = execute_read_query(connection, f'SELECT username FROM employees WHERE username = "aniskin"')
+    print(anketa)
