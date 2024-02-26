@@ -149,15 +149,5 @@ if __name__ == '__main__':
     # get_date_and_salary('misha', 'date', 'amount')
 
     # first_day = first_day_week(current_data)
-    # execute_query(connection, f'CREATE TABLE IF NOT EXISTS employees ('
-    #                           f'id INTEGER PRIMARY KEY AUTOINCREMENT,'
-    #                           f'username TEXT NOT NULL,'
-    #                           f'name TEXT NOT NULL,'
-    #                           f'job_title TEXT NOT NULL,'
-    #                           f'workplace TEXT NOT NULL,'
-    #                           f'hour_price INTEGER NOT NULL,'
-    #                           f'position_price1 INTEGER NOT NULL,'
-    #                           f'position_price2 INTEGER NOT NULL)')
-    users = execute_read_query(connection, 'SELECT password FROM users WHERE username = "misha"')
-    print(users)
-    print(check_password_hash(users[0][0], '12345'))
+    execute_query(connection, 'CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL,name TEXT NOT NULL,job_title TEXT NOT NULL,workplace TEXT NOT NULL,hour_price INTEGER NOT NULL,position_price1 INTEGER NOT NULL)')
+

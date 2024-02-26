@@ -36,6 +36,15 @@ def dashboard():
     if not anketa:
         return render_template('data_employees.html')
     if request.method == 'POST':
+        if all([request.form['name'], request.form['hour_price'], request.form['position_price'],
+                request.form['job_title'], request.form['workplace']]):
+            name, hour_price, position_price, job_title, workplace = request.form['name'], request.form['hour_price'], \
+                request.form['position_price'], request.form['job_title'], request.form['workplace']
+            execute_query(connection, add_query(table='employees', column=('name', 'hour_price', 'position_price',
+                                                                           'job_title', 'workplace'),
+                          value=(name, hour_price, position_price, job_title, workplace)))
+            return redirect(url_for('dashboard'))
+
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_salary' in request.form:
             sal_data = execute_read_query(connection,

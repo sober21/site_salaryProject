@@ -1,7 +1,5 @@
 from app import is_valid_password, is_valid_username, is_valid_email
 
-
-
 if __name__ == '__main__':
     # Тесты на правильность имени пользователя
     assert (is_valid_username('sdfa adsf')) == False
@@ -59,4 +57,3 @@ if __name__ == '__main__':
     assert (is_valid_email('почта@mail.ru')) == False
     assert (is_valid_email('sahsa@mail.ру')) == False
     assert (is_valid_email('sahsa@мэйл.ru')) == False
-

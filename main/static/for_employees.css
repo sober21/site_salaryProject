@@ -1,14 +1,19 @@
 .field {
-    text-align: right;
+
     line-height: 25px;
 
 }
 label {
-    float: left;
-    padding-right: 10px;
+    color: red;
+    padding-right: 0px;
+    width: 150px;
+    text-align: left;
 }
+
+
+
 select {
-    width: 170px
+    width: 190px;
 }
 .main{
     float: left;
