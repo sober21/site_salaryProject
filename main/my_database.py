@@ -75,10 +75,11 @@ def execute_read_query(connection, query):
 create_salary_users_table = """
 CREATE TABLE IF NOT EXISTS salary_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  username TEXT,
+  email TEXT,
   date TEXT UNIQUE,
   salary INTEGER,
-  hours INTEGER
+  hours INTEGER,
+  positions INTEGER
 );
 """
 
@@ -135,13 +136,16 @@ if __name__ == '__main__':
 
     # first_day = first_day_week(current_data)
     # execute_query(connection,
-    #               'CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY AUTOINCREMENT,username TEXT NOT NULL,'
+    #               'CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY AUTOINCREMENT,email TEXT NOT NULL UNIQUE,'
     #               'name TEXT NOT NULL,job_title TEXT NOT NULL,workplace TEXT NOT NULL,hour_price INTEGER NOT NULL,'
     #               'position_price INTEGER NOT NULL)')
     # execute_query(connection,
-    #               'insert into employees (username, name, job_title, workplace, hour_price, position_price) '
-    #               'values ("aniskin", "Сергун", "упаковщик", "упаковка", 3, 91)')
-    us = execute_read_query(connection, 'select * from employees')
-    print(us)
-    anketa = execute_read_query(connection, f'SELECT username FROM employees WHERE username = "aniskin"')
-    print(anketa)
+    #               'insert into employees (email, name, job_title, workplace, hour_price, position_price) '
+    #               'values ("dima@mail.ru", "Дмитрий", "упаковщик", "упаковка", 3, 91)')
+    # execute_query(connection, 'create table if not exists users('
+    #                           'id integer primary key autoincrement,'
+    #                           'email text not null unique,'
+    #                           'password text not null)')
+    us = execute_read_query(connection, 'select salary from salary_users')
+    for i in us:
+        print(i)
