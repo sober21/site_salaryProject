@@ -3,9 +3,9 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from main.app import current_data, salary_of_one_day, render_date, get_email, convert_salary_and_date, \
+from main.app import current_data, salary_of_one_day, render_date, convert_salary_and_date, \
     valid_register_data
-from main.my_database import execute_query, connection, add_query, execute_read_query, \
+from main.my_database import execute_query, connection, execute_read_query, \
     first_day_week
 
 app = Flask(__name__)
@@ -40,7 +40,6 @@ def data_employees():
                 name, hour_price, position_price, job_title, workplace = request.form['name'], request.form[
                     'hour_price'], \
                     request.form['position_price'], request.form['job_title'], request.form['workplace']
-                lst = [session['email'], name, hour_price, position_price, job_title, workplace]
                 execute_query(connection,
                               f'insert into employees (email, name, job_title, workplace, hour_price, position_price) '
                               f'values ("{session["email"]}", "{name}", "{job_title}", "{workplace}", {hour_price}, {position_price})')
@@ -49,6 +48,7 @@ def data_employees():
         except KeyError:
             pass
     return render_template('data_employees.html')
+
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
@@ -59,38 +59,44 @@ def dashboard():
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_salary' in request.form:
             sal_data = execute_read_query(connection,
-                                          f'SELECT date,hours,salary FROM salary_users WHERE '
+                                          f'SELECT date,hours,salary, positions FROM salary_users WHERE '
                                           f'email = "{session["email"]}" ORDER BY date ASC')
-            sum_of_period = execute_read_query(connection, f'SELECT SUM(salary), SUM(hours) FROM salary_users WHERE '
-                                                           f'email = "{session["email"]}"')
+            sum_of_period = execute_read_query(connection,
+                                               f'SELECT SUM(salary), SUM(hours), SUM(positions) FROM salary_users WHERE '
+                                               f'email = "{session["email"]}"')
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_week' in request.form:
             first_day = first_day_week(current_data)
-            sal_data = execute_read_query(connection, f'SELECT date, hours, salary FROM salary_users WHERE '
+            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions FROM salary_users WHERE '
                                                       f'email = "{session["email"]}" and date >= "{first_day}" '
                                                       f'ORDER BY date ASC')
-            sum_of_period = execute_read_query(connection, f'SELECT SUM(salary), SUM(hours) FROM salary_users WHERE '
-                                                           f'email= "{session["email"]}" and date >= "{first_day}"')
+            sum_of_period = execute_read_query(connection,
+                                               f'SELECT SUM(salary), SUM(hours), SUM(positions) FROM salary_users WHERE '
+                                               f'email= "{session["email"]}" and date >= "{first_day}"')
 
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_month' in request.form:
-            sal_data = execute_read_query(connection, f'SELECT date, hours, salary FROM salary_users '
+            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions FROM salary_users '
                                                       f'WHERE email = "{session["email"]}" and '
                                                       f'strftime("%m", date) >= strftime("%m", "now") '
                                                       f'ORDER BY date ASC')
-            sum_of_period = execute_read_query(connection, f'SELECT SUM(salary),SUM(hours) FROM salary_users '
-                                                           f'WHERE email = "{session["email"]}" and '
-                                                           f'strftime("%m", date) >= strftime("%m", "now")')
+            sum_of_period = execute_read_query(connection,
+                                               f'SELECT SUM(salary),SUM(hours), SUM(positions) FROM salary_users '
+                                               f'WHERE email = "{session["email"]}" and '
+                                               f'strftime("%m", date) >= strftime("%m", "now")')
             sal_data = convert_salary_and_date(sal_data)
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form and 'mens' in request.form:
             date = request.form.get('date')
             hours = request.form.get('hours')
             positions = request.form.get('positions')
             mens = request.form.get('mens')
-            salary = salary_of_one_day(hours, positions, mens)
+            price = execute_read_query(connection,
+                                                 f'SELECT hour_price, position_price FROM employees WHERE email = "{session["email"]}"')
+            pr_hour, pr_pos = price[0][0], price[0][1]
+            salary = salary_of_one_day(hours, positions, mens, pr_hour=pr_hour, pr_pos=pr_pos)
 
             execute_query(connection, f'REPLACE INTO salary_users (email, date, salary, hours, positions) '
-                                      f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, {positions})')
+                                      f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, {int(int(positions) / int(mens))})')
             date = render_date(date)
             sal_today = f'{date}: {int(salary)} руб.'
         return render_template('dashboard.html', cur_date=current_data, sal_data=sal_data, sal_today=sal_today,

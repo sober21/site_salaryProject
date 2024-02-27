@@ -39,12 +39,14 @@
     <tr>
         <th>Дата</th>
         <th>Часы</th>
+        <th>Позиции</th>
         <th>Сумма</th>
     </tr>
     {% for i in sal_data %}
     <tr>
         <td>{{ i[0] }}</td>
         <td>{{ i[1] }}</td>
+        <td>{{ i[3] }}</td>
         <td>{{ i[2] }}</td>
     </tr>
 
@@ -52,6 +54,7 @@
     <tr>
         <th>Всего</th>
         <td>{{ sum[0][1] }}</td>
+        <td>{{ sum[0][2] }}</td>
         <td>{{ sum[0][0] }} руб</td>
     </tr>
 

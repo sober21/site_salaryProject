@@ -96,8 +96,11 @@ create_salary = f"""
 # Удаление всех данных из таблицы
 # execute_query(connection, 'DELETE FROM salary_users')
 
+# Удаление 1 записи из таблицы
+# execute_query((connection, 'DELETE FROM salary_users WHERE id = 2'))
+
 # Все таблицы в базе
-# table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')# все таблицы
+table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')# все таблицы
 # for i in table:
 #     print(i)
 
@@ -146,6 +149,6 @@ if __name__ == '__main__':
     #                           'id integer primary key autoincrement,'
     #                           'email text not null unique,'
     #                           'password text not null)')
-    us = execute_read_query(connection, 'select salary from salary_users')
-    for i in us:
-        print(i)
+    # us = execute_read_query(connection, 'select email from users')
+    # print(us)
+    print(table)

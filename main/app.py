@@ -70,8 +70,8 @@ def get_email(acc):
 
 
 def convert_salary_and_date(array):
-    for dt, hours, salary in array:
-        yield render_date(dt), hours, f'{int(float(salary))} руб'
+    for dt, hours, salary, positions in array:
+        yield render_date(dt), hours, f'{int(float(salary))} руб', positions
 
 
 def change_month_name(month):
@@ -91,9 +91,9 @@ def render_date(dt: str) -> str:
     return my_date
 
 
-def salary_of_one_day(h, pos, emp) -> int | float:
+def salary_of_one_day(h, pos, emp, pr_hour=91, pr_pos=3.7) -> int:
     # Считает зарплату за один день и возвращает число
-    salary = int(h) * PRICE_OF_HOUR + (int(pos) / int(emp)) * PRICE_OF_POSITION
+    salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos)
     return int(salary)
 
 
