@@ -3,10 +3,21 @@ html,body {
   width: 100%;
   place-items: center;
   background: #87CEEB;
+  display: grid;
 }
 
-h1 {
-    color:red
+footer {
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    margin-up: 50px;
+    background-color: blue;
+}
+
+
+.menu {
+    background-color: red;
+    border: solid 2px green;
 }
 
 table {
@@ -14,6 +25,7 @@ table {
   border: 2px solid rgb(200,200,200);
   letter-spacing: 1px;
   font-size: 0.8rem;
+
 }
 
 td, th {
@@ -40,3 +52,25 @@ tr:nth-child(odd) td {
 caption {
   padding: 10px;
 }
+
+.label-dash {
+    text-align: center;
+    width: 100%;
+    color: blue;
+    background-color: yellow;
+}
+
+.salary {
+    display: grid;
+    width: 200px;
+    border: 1px solid red;
+
+}
+
+.div-for-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding:10px;
+}
+

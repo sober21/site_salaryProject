@@ -149,6 +149,10 @@ if __name__ == '__main__':
     #                           'id integer primary key autoincrement,'
     #                           'email text not null unique,'
     #                           'password text not null)')
-    # us = execute_read_query(connection, 'select email from users')
+    # u = execute_read_query(connection, 'select * from salary_users where email = "max@mail.ru"')
+    # print(u)
+    # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INT DEFAULT 0')
+    # us = execute_read_query(connection, 'select * from salary_users where email = "max@mail.ru"')
     # print(us)
-    print(table)
+    #
+    pass

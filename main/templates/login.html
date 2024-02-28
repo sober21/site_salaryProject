@@ -5,15 +5,41 @@
 
 <body>
 {% block content %}
-    <h1>Личный кабинет</h1>
+    <h1>Вход в личный кабинет</h1>
     <h3>{{ msg }}</h3>
+<!--<div class="dropdown-menu">-->
+<!--  <form class="px-4 py-3">-->
+<!--    <div class="mb-3">-->
+<!--      <label for="email" class="form-label">Электронная почта</label>-->
+<!--      <input type="email" class="form-control" id="email" name="email" placeholder="email@example.com">-->
+<!--    </div>-->
+<!--    <div class="mb-3">-->
+<!--      <label for="password" class="form-label">Пароль</label>-->
+<!--      <input type="password" class="form-control" id="password" name="password" placeholder="Введите пароль">-->
+<!--    </div>-->
+<!--    <div class="mb-3">-->
+<!--      <div class="form-check">-->
+<!--        <input type="checkbox" class="form-check-input" id="dropdownCheck">-->
+<!--        <label class="form-check-label" for="dropdownCheck">-->
+<!--          Запомнить меня-->
+<!--        </label>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--    <button type="submit" class="btn btn-primary">Войти</button>-->
+<!--  </form>-->
+<!--  <div class="dropdown-divider"></div>-->
+<!--  <a class="dropdown-item" href="{{ url_for('register') }}">Зарегистрироваться</a>-->
+<!--  <a class="dropdown-item" href="#">Забыли пароль?</a>-->
+<!--</div>-->
+<div>
     <form method="post">
         <label for="email">Электронная почта:</label>
         <input type="text" name="email" id="email" placeholder="Введите почту">
         <label for="password">Пароль:</label>
-        <input type="text" name="password" id="password" placeholder="пароль">
+        <input type="text" name="password" id="password" placeholder="Введите пароль">
         <input type="submit" value="Войти">
     </form>
+</div>
     <a href="{{ url_for('register') }}">Зарегистрироваться</a>
 {% endblock content %}
 </body>

@@ -11,17 +11,21 @@
 <body>
 {% block content %}
 <h1>Вы вошли как {{ email }}</h1>
-
-<form action="" method="post">
-    <label for="hours">Количество часов:</label>
-    <input type="number" id="hours" name="hours" min="1" max="12" value="9">
-    <label for="positions">Количество позиций:</label>
-    <input type="number" name="positions" id="positions" min="1" value="1">
-    <label for="mens">Количество человек:</label>
-    <input type="number" name="mens" id="mens" min="1" value="3">
-    <input type="date" name="date" value="{{ cur_date }}" min="2018-01-01" max="{{ cur_date }}"/>
+<div class="div-for-form">
+<form class="salary" action="" method="post">
+    <label class="label-dash" for="hours">Часы:</label>
+    <input type="number" id="hours" name="hours" min="1" max="12" value="9" placeholder="Количество отработанных часов">
+    <label class="label-dash" for="positions">Отбор:</label>
+    <input type="number" name="positions" id="positions" min="1" value="1" placeholder="Количество отобранных позиций">
+    <label class="label-dash" for="incoming_positions">Приход:</label>
+    <input type="number" name="incoming_positions" id="incoming_positions" min="1" value="1" placeholder="Количество принятых позиций">
+    <label class="label-dash" for="mens">Количество человек:</label>
+    <input type="number" name="mens" id="mens" min="1" value="3" placeholder="Количество работавших людей">
+    <input type="date" name="date" value="{{ cur_date }}" min="2024-01-01" max="{{ cur_date }}"/>
     <input type="submit" value="Добавить">
 </form>
+</div>
+<div class="div-for-form">
 <table>
 <tr><td><form method="post">
     <input type="submit" name="get_salary" value="Показать">
@@ -34,12 +38,15 @@
 </form></td>
 </tr>
 </table>
+</div>
+<div class="div-for-form">
 <table>
     {% if sal_data %}
     <tr>
         <th>Дата</th>
         <th>Часы</th>
-        <th>Позиции</th>
+        <th>Отбор</th>
+        <th>Приход</th>
         <th>Сумма</th>
     </tr>
     {% for i in sal_data %}
@@ -47,6 +54,7 @@
         <td>{{ i[0] }}</td>
         <td>{{ i[1] }}</td>
         <td>{{ i[3] }}</td>
+        <td>{{ i[4] }}</td>
         <td>{{ i[2] }}</td>
     </tr>
 
@@ -55,11 +63,13 @@
         <th>Всего</th>
         <td>{{ sum[0][1] }}</td>
         <td>{{ sum[0][2] }}</td>
+        <td>{{ sum[0][3] }}</td>
         <td>{{ sum[0][0] }} руб</td>
     </tr>
 
     {% endif %}
 </table>
+</div>
 {% if sal_today %}
 {{sal_today}}
 {% endif %}

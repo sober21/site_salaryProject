@@ -23,7 +23,7 @@ def index():
         hours = request.form.get('hours')
         positions = request.form.get('positions')
         mens = request.form.get('mens')
-        salary = salary_of_one_day(hours, positions, mens)
+        salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=0)
         date = render_date(date)
         res = int(salary)
         return render_template('index.html', cur_date=current_data,
@@ -59,29 +59,29 @@ def dashboard():
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_salary' in request.form:
             sal_data = execute_read_query(connection,
-                                          f'SELECT date,hours,salary, positions FROM salary_users WHERE '
+                                          f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
                                           f'email = "{session["email"]}" ORDER BY date ASC')
             sum_of_period = execute_read_query(connection,
-                                               f'SELECT SUM(salary), SUM(hours), SUM(positions) FROM salary_users WHERE '
+                                               f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users WHERE '
                                                f'email = "{session["email"]}"')
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_week' in request.form:
             first_day = first_day_week(current_data)
-            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions FROM salary_users WHERE '
+            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users WHERE '
                                                       f'email = "{session["email"]}" and date >= "{first_day}" '
                                                       f'ORDER BY date ASC')
             sum_of_period = execute_read_query(connection,
-                                               f'SELECT SUM(salary), SUM(hours), SUM(positions) FROM salary_users WHERE '
+                                               f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users WHERE '
                                                f'email= "{session["email"]}" and date >= "{first_day}"')
 
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_month' in request.form:
-            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions FROM salary_users '
+            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
                                                       f'WHERE email = "{session["email"]}" and '
                                                       f'strftime("%m", date) >= strftime("%m", "now") '
                                                       f'ORDER BY date ASC')
             sum_of_period = execute_read_query(connection,
-                                               f'SELECT SUM(salary),SUM(hours), SUM(positions) FROM salary_users '
+                                               f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users '
                                                f'WHERE email = "{session["email"]}" and '
                                                f'strftime("%m", date) >= strftime("%m", "now")')
             sal_data = convert_salary_and_date(sal_data)
@@ -90,13 +90,16 @@ def dashboard():
             hours = request.form.get('hours')
             positions = request.form.get('positions')
             mens = request.form.get('mens')
+            incoming_positions = request.form['incoming_positions']
             price = execute_read_query(connection,
-                                                 f'SELECT hour_price, position_price FROM employees WHERE email = "{session["email"]}"')
+                                       f'SELECT hour_price, position_price FROM employees WHERE email = "{session["email"]}"')
             pr_hour, pr_pos = price[0][0], price[0][1]
-            salary = salary_of_one_day(hours, positions, mens, pr_hour=pr_hour, pr_pos=pr_pos)
+            salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
+                                       pr_hour=pr_hour, pr_pos=pr_pos)
 
-            execute_query(connection, f'REPLACE INTO salary_users (email, date, salary, hours, positions) '
-                                      f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, {int(int(positions) / int(mens))})')
+            execute_query(connection, f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
+                                      f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
+                                      f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
             date = render_date(date)
             sal_today = f'{date}: {int(salary)} руб.'
         return render_template('dashboard.html', cur_date=current_data, sal_data=sal_data, sal_today=sal_today,
