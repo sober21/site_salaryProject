@@ -14,9 +14,11 @@ footer {
     background-color: blue;
 }
 
+a {
+    text-decoration: none;
+}
 
 .menu {
-    background-color: red;
     border: solid 2px green;
 }
 
@@ -53,6 +55,7 @@ caption {
   padding: 10px;
 }
 
+
 .label-dash {
     text-align: center;
     width: 100%;
@@ -74,3 +77,7 @@ caption {
     padding:10px;
 }
 
+
+.navbar {
+    width: 100%;
+}

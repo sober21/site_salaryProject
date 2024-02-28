@@ -1,3 +1,5 @@
+{% extends 'base.html' %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +7,7 @@
     <title>{{ title }}</title>
 </head>
 <body>
+{% block content %}
     <h1>Регистрация</h1>
 
         <form method="post">
@@ -17,6 +20,6 @@
         <input type="submit" value="Зарегистрироваться">
         </form>
     <h3>{{ msg }}</h3>
-
+{% endblock %}
 </body>
 </html>

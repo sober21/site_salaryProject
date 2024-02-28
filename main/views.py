@@ -16,7 +16,8 @@ app.secret_key = os.urandom(23).hex()
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    if 'username' in session and 'password' in session:
+    log = 'Вход'
+    if 'email' in session and 'password' in session:
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
         date = request.form.get('date')
@@ -28,7 +29,7 @@ def index():
         res = int(salary)
         return render_template('index.html', cur_date=current_data,
                                title='Главная страница', date=date, res=res)
-    return render_template('index.html', cur_date=current_data, title='Главная страница')
+    return render_template('index.html', cur_date=current_data, title='Главная страница', login=log)
 
 
 @app.route('/data_employees', methods=['POST', 'GET'])
@@ -107,8 +108,8 @@ def dashboard():
     return render_template('dashboard.html', cur_date=current_data, title='Добавить', email=session['email'])
 
 
-@app.route('/login/', methods=['POST', 'GET'])
-@app.route('/login/')
+@app.route('/login', methods=['POST', 'GET'])
+@app.route('/login')
 def login():
     msg = ''
     if 'email' in session and 'password' in session:
