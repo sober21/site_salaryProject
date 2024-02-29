@@ -134,14 +134,10 @@ WHERE
 # delete_date = f'DELETE FROM salary WHERE id = 2'
 # execute_query(connection, delete_date)
 if __name__ == '__main__':
-    # print(execute_read_query(connection, 'SELECT date,amount FROM salary_users WHERE username = "misha"'))
-    # get_date_and_salary('misha', 'date', 'amount')
-
-    # first_day = first_day_week(current_data)
+    # execute_query(connection, 'DROP TABLE users')
     # execute_query(connection,
-    #               'CREATE TABLE IF NOT EXISTS employees (id INTEGER PRIMARY KEY AUTOINCREMENT,email TEXT NOT NULL UNIQUE,'
-    #               'name TEXT NOT NULL,job_title TEXT NOT NULL,workplace TEXT NOT NULL,hour_price INTEGER NOT NULL,'
-    #               'position_price INTEGER NOT NULL)')
+    #               'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT,email TEXT NOT NULL UNIQUE,'
+    #               'password TEXT NOT NULL, username TEXT NOT NULL, job_title TEXT NOT NULL,workplace TEXT NOT NULL)')
     # execute_query(connection,
     #               'insert into employees (email, name, job_title, workplace, hour_price, position_price) '
     #               'values ("dima@mail.ru", "Дмитрий", "упаковщик", "упаковка", 3, 91)')
@@ -152,7 +148,5 @@ if __name__ == '__main__':
     # u = execute_read_query(connection, 'select * from salary_users where email = "max@mail.ru"')
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INT DEFAULT 0')
-    # us = execute_read_query(connection, 'select * from salary_users where email = "max@mail.ru"')
-    # print(us)
-    #
-    pass
+    us = execute_read_query(connection, 'select * from users')
+    print(us)

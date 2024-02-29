@@ -14,6 +14,17 @@ footer {
     background-color: blue;
 }
 
+div {
+    margin: 15px;
+}
+
+label {
+    color: #ff9900;
+    padding-right: 0px;
+    width: 150px;
+    text-align: left;
+}
+
 a {
     text-decoration: none;
 }
@@ -71,12 +82,23 @@ caption {
 }
 
 .div-for-form {
+    background-color: black;
+    widht: 300px;
+    height: 100%;
+    border: solid #ff9900;
     display: flex;
     align-items: center;
     justify-content: center;
     padding:10px;
 }
 
+
+.form-for-reg {
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    padding:10px;
+}
 
 .navbar {
     width: 100%;

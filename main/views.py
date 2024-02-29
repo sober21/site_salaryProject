@@ -53,9 +53,9 @@ def data_employees():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
-    anketa = execute_read_query(connection, f'SELECT email FROM employees WHERE email = "{session["email"]}"')
-    if not anketa:
-        return redirect(url_for('data_employees'))
+    # anketa = execute_read_query(connection, f'SELECT email FROM employees WHERE email = "{session["email"]}"')
+    # if not anketa:
+    #     return redirect(url_for('data_employees'))
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_salary' in request.form:
@@ -142,10 +142,14 @@ def logout():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     msg = ''
-    if request.method == 'POST' and 'password' in request.form and 'email' in request.form and 'replay_password' in request.form:
+    if request.method == 'POST' and all([request.form['email'], request.form['password'], request.form['replay_password'],
+                                         request.form['username'], request.form['job_title'], request.form['workplace']]):
         password = request.form['password']
         replay_password = request.form['replay_password']
         email = request.form['email']
+        username = request.form['username']
+        job_title = request.form['job_title']
+        workplace = request.form['workplace']
         if password == replay_password:
             account = execute_read_query(connection,
                                          f'SELECT * FROM users WHERE email = "{email}"')
@@ -154,12 +158,12 @@ def register():
                     session['email'] = email
                     session['password'] = password
                     password = generate_password_hash(password)
-                    execute_query(connection, f'insert into users (password, email) values("{password}", "{email}")')
+                    execute_query(connection, f'insert into users (email, password, username, job_title, workplace) '
+                                              f'values("{email}", "{password}", "{username}", "{job_title}", "{workplace}")')
                     return redirect(url_for('dashboard'))
                 else:
                     msg = 'Имя пользователя должно быть не менее 4 символов. Только латинские буквы, цифры, нижнее подчёркивание.\n Пароль не менее 8 символов'
             else:
-
                 msg = 'Пользователь с такой электронной почтой уже существует'
     return render_template('register.html', msg=msg)
 
