@@ -138,16 +138,17 @@ if __name__ == '__main__':
     # execute_query(connection,
     #               'CREATE TABLE IF NOT EXISTS price (email TEXT NOT NULL UNIQUE, '
     #               'hour_price INTEGER NOT NULL, position_price INTEGER NOT NULL)')
-    # execute_query(connection,
-    #               'insert into employees (email, name, job_title, workplace, hour_price, position_price) '
-    #               'values ("dima@mail.ru", "Дмитрий", "упаковщик", "упаковка", 3, 91)')
-    # execute_query(connection, 'create table if not exists users('
-    #                           'id integer primary key autoincrement,'
-    #                           'email text not null unique,'
-    #                           'password text not null)')
-    # u = execute_read_query(connection, 'select * from salary_users where email = "max@mail.ru"')
+    # execute_query(connection, 'DROP TABLE salary_users')
+    # execute_query(connection, 'CREATE TABLE salary_users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, '
+    #                           'date TEXT UNIQUE, salary INTEGER NOT NULL, hours INTEGER NOT NULL, '
+    #                           'positions INTEGER DEFAULT 0, incoming_positions INTEGER DEFAULT 0)')
+    u = execute_read_query(connection, 'select * from price where email = "dima@mail.ru"')
     # print(u)
-    # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INT DEFAULT 0')
-    us = execute_read_query(connection, 'select * from price')
-    for user in us:
-        print(user)
+    # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
+    # us = execute_read_query(connection, 'select * from PRICE')
+    # print(us)
+    # sal_data = execute_read_query(connection,
+    #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
+    #                               f'email = "dima@mail.ru" ORDER BY date ASC')
+    for i in u:
+        print(i)

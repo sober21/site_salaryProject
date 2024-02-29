@@ -57,16 +57,12 @@
 <div>
 <table>
     {% if sal_data %}
+    {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
     <tr>
         <th>Дата</th>
         <th>Часы</th>
-        {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
         <th>Отбор</th>
         <th>Приход</th>
-        {% endif %}
-        {% if workplace[0][0]=='Упаковка' %}
-        <th>Запаковано</th>
-        {% endif %}
         <th>Сумма</th>
     </tr>
     {% for i in sal_data %}
@@ -74,9 +70,7 @@
         <td>{{ i[0] }}</td>
         <td>{{ i[1] }}</td>
         <td>{{ i[2] }}</td>
-        {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
         <td>{{ i[3] }}</td>
-        {% endif %}
         <td>{{ i[4] }}</td>
     </tr>
 
@@ -85,12 +79,35 @@
         <th>Всего</th>
         <th>{{ sum[0][1] }}</th>
         <th>{{ sum[0][2] }}</th>
-        {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
         <th>{{ sum[0][3] }}</th>
-        {% endif %}
         <th>{{ sum[0][0] }} руб</th>
     </tr>
 
+    {% endif %}
+    {% if workplace[0][0] == 'Упаковка' %}
+    <tr>
+        <th>Дата</th>
+        <th>Часы</th>
+        <th>Упаковано</th>
+        <th>Сумма</th>
+    </tr>
+    {% for i in sal_data %}
+    <tr>
+        <td>{{ i[0] }}</td>
+        <td>{{ i[1] }}</td>
+        <td>{{ i[2] }}</td>
+        <td>{{ i[4] }}</td>
+    </tr>
+
+    {% endfor %}
+    <tr>
+        <th>Всего</th>
+        <th>{{ sum[0][1] }}</th>
+        <th>{{ sum[0][2] }}</th>
+        <th>{{ sum[0][0] }} руб</th>
+    </tr>
+
+    {% endif %}
     {% endif %}
 </table>
 </div>

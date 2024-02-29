@@ -86,12 +86,15 @@ def dashboard():
                                                f'WHERE email = "{session["email"]}" and '
                                                f'strftime("%m", date) >= strftime("%m", "now")')
             sal_data = convert_salary_and_date(sal_data)
-        elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form and 'mens' in request.form:
+        elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
             date = request.form.get('date')
             hours = request.form.get('hours')
             positions = request.form.get('positions')
-            mens = request.form.get('mens')
-            incoming_positions = request.form['incoming_positions']
+            if 'mens' in request.form and 'incoming_positions' in request.form:
+                mens = request.form.get('mens')
+                incoming_positions = request.form['incoming_positions']
+            else:
+                mens, incoming_positions = 1, 0
             price = execute_read_query(connection,
                                        f'SELECT hour_price, position_price FROM price WHERE email = "{session["email"]}"')
             pr_hour, pr_pos = price[0][0], price[0][1]
@@ -162,8 +165,8 @@ def register():
                     password = generate_password_hash(password)
                     execute_query(connection, f'insert into users (email, password, username, job_title, workplace) '
                                               f'values("{email}", "{password}", "{username}", "{job_title}", "{workplace}")')
-                    execute_query(connection, f'INSERT INTO prices (email, hour_price, position_price) '
-                                              f'value ("{session["email"]}""{hour_price}", "{position_price}"')
+                    execute_query(connection, f'INSERT INTO price (email, hour_price, position_price) '
+                                              f'values ("{session["email"]}", {hour_price}, {position_price})')
                     return redirect(url_for('dashboard'))
                 else:
                     msg = 'Пароль должен быть не менее 8 символов'

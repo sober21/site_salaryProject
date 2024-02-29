@@ -89,7 +89,7 @@ def get_email(acc):
 
 
 def convert_salary_and_date(array):
-    # Поочерёдно возвращает фрматированную дату, часы, позиции, приход и форматированную зарплату
+    # Поочерёдно возвращает форматированную дату, часы, позиции, приход и форматированную зарплату
     for dt, hours, salary, positions, incoming_positions in array:
         yield render_date(dt), hours, positions, incoming_positions, f'{int(float(salary))} руб'
 
@@ -111,12 +111,14 @@ def render_date(dt: str) -> str:
     return my_date
 
 
-def salary_of_one_day(h, pos, pr_hour, pr_pos, inc_pos=None, emp=None) -> int:
+def salary_of_one_day(h, pos, pr_hour, pr_pos, inc_pos=0, emp=1) -> int:
     # Считает зарплату за один день и возвращает число
-    if emp is None:
+    if emp == 1 and inc_pos == 0:
         salary = int(h) * int(pr_hour) + int(pos) * float(pr_pos)
-    elif isinstance(emp, int) and inc_pos != 0:
+    elif inc_pos != 0:
         salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos) + (int(inc_pos) / int(emp)) * 7
+    else:
+        salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos)
     return int(salary)
 
 
