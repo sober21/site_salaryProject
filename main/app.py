@@ -14,8 +14,27 @@ def get_username(acc):
     res = [i[1] for i in acc]
     return res
 
+def get_hour_price(job_title: str) -> int:
+    # Возращает стоимость часа в зависимости от должности
+    result = 89
+    if job_title == 'Кладовщик':
+        result = 91
+    elif job_title == 'Пом.кладовщика':
+        result = 90
+    return result
 
-def valid_register_data(password, email):
+
+def get_position_price(workplace: str) -> int | float:
+    # Возращает стоимость позиции в зависимости от должности
+    result = 3.7
+    if workplace == '3 отдел':
+        result = 4.7
+    elif workplace == 'Упаковка':
+        result = 3
+    return result
+
+
+def valid_register_data(email, password):
     return all((is_valid_password(password), is_valid_email(email)))
 
 
@@ -70,8 +89,9 @@ def get_email(acc):
 
 
 def convert_salary_and_date(array):
+    # Поочерёдно возвращает фрматированную дату, часы, позиции, приход и форматированную зарплату
     for dt, hours, salary, positions, incoming_positions in array:
-        yield render_date(dt), hours, f'{int(float(salary))} руб', positions, incoming_positions
+        yield render_date(dt), hours, positions, incoming_positions, f'{int(float(salary))} руб'
 
 
 def change_month_name(month):
@@ -91,11 +111,11 @@ def render_date(dt: str) -> str:
     return my_date
 
 
-def salary_of_one_day(h, pos, inc_pos, emp, pr_hour=91, pr_pos=3.7) -> int:
+def salary_of_one_day(h, pos, pr_hour, pr_pos, inc_pos=None, emp=None) -> int:
     # Считает зарплату за один день и возвращает число
-    if inc_pos == 0:
-        salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos)
-    else:
+    if emp is None:
+        salary = int(h) * int(pr_hour) + int(pos) * float(pr_pos)
+    elif isinstance(emp, int) and inc_pos != 0:
         salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos) + (int(inc_pos) / int(emp)) * 7
     return int(salary)
 

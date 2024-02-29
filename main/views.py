@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from main.app import current_data, salary_of_one_day, render_date, convert_salary_and_date, \
-    valid_register_data
+    valid_register_data, get_hour_price, get_position_price
 from main.my_database import execute_query, connection, execute_read_query, \
     first_day_week
 
@@ -16,7 +16,6 @@ app.secret_key = os.urandom(23).hex()
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    log = 'Вход'
     if 'email' in session and 'password' in session:
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
@@ -29,7 +28,7 @@ def index():
         res = int(salary)
         return render_template('index.html', cur_date=current_data,
                                title='Главная страница', date=date, res=res)
-    return render_template('index.html', cur_date=current_data, title='Главная страница', login=log)
+    return render_template('index.html', cur_date=current_data, title='Главная страница')
 
 
 @app.route('/data_employees', methods=['POST', 'GET'])
@@ -53,6 +52,7 @@ def data_employees():
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
+    workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
     # anketa = execute_read_query(connection, f'SELECT email FROM employees WHERE email = "{session["email"]}"')
     # if not anketa:
     #     return redirect(url_for('data_employees'))
@@ -93,7 +93,7 @@ def dashboard():
             mens = request.form.get('mens')
             incoming_positions = request.form['incoming_positions']
             price = execute_read_query(connection,
-                                       f'SELECT hour_price, position_price FROM employees WHERE email = "{session["email"]}"')
+                                       f'SELECT hour_price, position_price FROM price WHERE email = "{session["email"]}"')
             pr_hour, pr_pos = price[0][0], price[0][1]
             salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
                                        pr_hour=pr_hour, pr_pos=pr_pos)
@@ -103,9 +103,9 @@ def dashboard():
                                       f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
             date = render_date(date)
             sal_today = f'{date}: {int(salary)} руб.'
-        return render_template('dashboard.html', cur_date=current_data, sal_data=sal_data, sal_today=sal_today,
+        return render_template('dashboard.html', workplace=workplace, cur_date=current_data, sal_data=sal_data, sal_today=sal_today,
                                sum=sum_of_period, email=session['email'])
-    return render_template('dashboard.html', cur_date=current_data, title='Добавить', email=session['email'])
+    return render_template('dashboard.html', workplace=workplace,cur_date=current_data, title='Добавить', email=session['email'])
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -154,15 +154,19 @@ def register():
             account = execute_read_query(connection,
                                          f'SELECT * FROM users WHERE email = "{email}"')
             if not account:
-                if valid_register_data(password, email):
+                if valid_register_data(email=email, password=password):
+                    hour_price = get_hour_price(job_title=job_title)
+                    position_price = get_position_price(workplace=workplace)
                     session['email'] = email
                     session['password'] = password
                     password = generate_password_hash(password)
                     execute_query(connection, f'insert into users (email, password, username, job_title, workplace) '
                                               f'values("{email}", "{password}", "{username}", "{job_title}", "{workplace}")')
+                    execute_query(connection, f'INSERT INTO prices (email, hour_price, position_price) '
+                                              f'value ("{session["email"]}""{hour_price}", "{position_price}"')
                     return redirect(url_for('dashboard'))
                 else:
-                    msg = 'Имя пользователя должно быть не менее 4 символов. Только латинские буквы, цифры, нижнее подчёркивание.\n Пароль не менее 8 символов'
+                    msg = 'Пароль должен быть не менее 8 символов'
             else:
                 msg = 'Пользователь с такой электронной почтой уже существует'
     return render_template('register.html', msg=msg)

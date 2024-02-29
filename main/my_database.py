@@ -136,8 +136,8 @@ WHERE
 if __name__ == '__main__':
     # execute_query(connection, 'DROP TABLE users')
     # execute_query(connection,
-    #               'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT,email TEXT NOT NULL UNIQUE,'
-    #               'password TEXT NOT NULL, username TEXT NOT NULL, job_title TEXT NOT NULL,workplace TEXT NOT NULL)')
+    #               'CREATE TABLE IF NOT EXISTS price (email TEXT NOT NULL UNIQUE, '
+    #               'hour_price INTEGER NOT NULL, position_price INTEGER NOT NULL)')
     # execute_query(connection,
     #               'insert into employees (email, name, job_title, workplace, hour_price, position_price) '
     #               'values ("dima@mail.ru", "Дмитрий", "упаковщик", "упаковка", 3, 91)')
@@ -148,5 +148,6 @@ if __name__ == '__main__':
     # u = execute_read_query(connection, 'select * from salary_users where email = "max@mail.ru"')
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INT DEFAULT 0')
-    us = execute_read_query(connection, 'select * from users')
-    print(us)
+    us = execute_read_query(connection, 'select * from price')
+    for user in us:
+        print(user)

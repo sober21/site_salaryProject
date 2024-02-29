@@ -1,4 +1,5 @@
-from app import is_valid_password, is_valid_username, is_valid_email, valid_register_data
+from app import (is_valid_password, is_valid_username, is_valid_email, valid_register_data, get_position_price,
+                 get_hour_price)
 
 if __name__ == '__main__':
     # Тесты на правильность имени пользователя
@@ -59,13 +60,24 @@ if __name__ == '__main__':
     assert (is_valid_email('sahsa@мэйл.ru')) == False
 
     # Тесты на проверку всех данных регистрации
-    assert valid_register_data('sasha', '1123456678', 'sasha@mail.ru') == True
-    assert valid_register_data('sashaп', '1123456678', 'sasha@mail.ru') == False
-    assert valid_register_data('sasha', '1123456678', 'sa!sha@mail.ru') == False
-    assert valid_register_data('sasha', '1123456678', 'sasha.mail@ru') == False
-    assert valid_register_data('sasha', '1123456678', 'sas@ha@mail.ru') == False
-    assert valid_register_data('sasha', '1123456678', 'sashamail.ru') == False
-    assert valid_register_data('sashaERWER', '1123456678', 'sasha@mail.ru') == True
-    assert valid_register_data('sash_a', '11_*&%^23456678', 'sasha@mail.ru') == True
-    assert valid_register_data('sasha', '11234566 78', 'sasha@mail.ru') == False
-    assert valid_register_data('sasha', '1123456678', 'sasha@mailru') == False
+    assert valid_register_data('sasha@mail.ru', '1123456678') == True
+    assert valid_register_data('sas!ha@mail.ru', '1123456678') == False
+    assert valid_register_data('sasha@mail.ru', 'парольььь') == False
+    assert valid_register_data('sasha.mail@ru', '1123456678') == False
+    assert valid_register_data('sas@ha@mail.ru', '1123456678') == False
+    assert valid_register_data('sashamail.ru', '1123456678') == False
+    assert valid_register_data('sasha@mail.ru', '1123456UTYU678') == True
+    assert valid_register_data('sasha@mail.ru', '11_*&%^23456678') == True
+    assert valid_register_data('sasha@mail.ru', '11234566 78') == False
+    assert valid_register_data('sasha@mailru', '1123456678') == False
+
+    # Функция возращающая стоимость часа
+    assert get_hour_price('Кладовщик') == 91
+    assert get_hour_price('Упаковщик') == 89
+    assert get_hour_price('Пом.кладовщика') == 90
+    assert get_hour_price('') == 89
+
+    # Функция возвращающая стоимость позиции
+    assert get_position_price('1 отдел') == 3.7
+    assert get_position_price('3 отдел') == 4.7
+    assert get_position_price('Упаковка') == 3

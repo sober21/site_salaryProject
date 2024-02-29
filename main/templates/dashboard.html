@@ -11,21 +11,36 @@
 <body>
 {% block content %}
 <h1>Вы вошли как {{ email }}</h1>
+{% if workplace[0][0]=='Упаковка' %}
 <div class="div-for-form">
 <form class="salary" action="" method="post">
-    <label class="label-dash" for="hours">Часы:</label>
-    <input type="number" id="hours" name="hours" min="1" max="12" value="9" placeholder="Количество отработанных часов">
-    <label class="label-dash" for="positions">Отбор:</label>
-    <input type="number" name="positions" id="positions" min="1" value="1" placeholder="Количество отобранных позиций">
-    <label class="label-dash" for="incoming_positions">Приход:</label>
-    <input type="number" name="incoming_positions" id="incoming_positions" min="1" value="1" placeholder="Количество принятых позиций">
-    <label class="label-dash" for="mens">Количество человек:</label>
-    <input type="number" name="mens" id="mens" min="1" value="3" placeholder="Количество работавших людей">
+    <label class="label-dash" for="uhours">Часы:</label>
+    <input type="number" id="uhours" name="hours" min="1" max="12" placeholder="Количество отработанных часов" required>
+    <label class="label-dash" for="upositions">Запаковано:</label>
+    <input type="number" name="positions" id="upositions" min="1" placeholder="Количество запакованных позиций" required>
     <input type="date" name="date" value="{{ cur_date }}" min="2024-01-01" max="{{ cur_date }}"/>
     <input type="submit" value="Добавить">
 </form>
 </div>
+
+{% endif %}
+{% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
 <div class="div-for-form">
+<form class="salary" action="" method="post">
+    <label class="label-dash" for="hours">Часы:</label>
+    <input type="number" id="hours" name="hours" min="1" max="12" placeholder="Количество отработанных часов" required>
+    <label class="label-dash" for="positions">Отбор:</label>
+    <input type="number" name="positions" id="positions" min="1" placeholder="Количество отобранных позиций" required>
+    <label class="label-dash" for="incoming_positions">Приход:</label>
+    <input type="number" name="incoming_positions" id="incoming_positions" min="0" placeholder="Количество принятых позиций" required>
+    <label class="label-dash" for="mens">Количество человек:</label>
+    <input type="number" name="mens" id="mens" min="1" value="3" placeholder="Количество работавших людей" required>
+    <input type="date" name="date" value="{{ cur_date }}" min="2024-01-01" max="{{ cur_date }}"/>
+    <input type="submit" value="Добавить">
+</form>
+</div>
+{% endif %}
+<div>
 <table>
 <tr><td><form method="post">
     <input type="submit" name="get_salary" value="Показать">
@@ -39,32 +54,41 @@
 </tr>
 </table>
 </div>
-<div class="div-for-form">
+<div>
 <table>
     {% if sal_data %}
     <tr>
         <th>Дата</th>
         <th>Часы</th>
+        {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
         <th>Отбор</th>
         <th>Приход</th>
+        {% endif %}
+        {% if workplace[0][0]=='Упаковка' %}
+        <th>Запаковано</th>
+        {% endif %}
         <th>Сумма</th>
     </tr>
     {% for i in sal_data %}
     <tr>
         <td>{{ i[0] }}</td>
         <td>{{ i[1] }}</td>
-        <td>{{ i[3] }}</td>
-        <td>{{ i[4] }}</td>
         <td>{{ i[2] }}</td>
+        {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
+        <td>{{ i[3] }}</td>
+        {% endif %}
+        <td>{{ i[4] }}</td>
     </tr>
 
     {% endfor %}
     <tr>
         <th>Всего</th>
-        <td>{{ sum[0][1] }}</td>
-        <td>{{ sum[0][2] }}</td>
-        <td>{{ sum[0][3] }}</td>
-        <td>{{ sum[0][0] }} руб</td>
+        <th>{{ sum[0][1] }}</th>
+        <th>{{ sum[0][2] }}</th>
+        {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
+        <th>{{ sum[0][3] }}</th>
+        {% endif %}
+        <th>{{ sum[0][0] }} руб</th>
     </tr>
 
     {% endif %}
