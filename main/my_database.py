@@ -142,7 +142,7 @@ if __name__ == '__main__':
     # execute_query(connection, 'CREATE TABLE salary_users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, '
     #                           'date TEXT UNIQUE, salary INTEGER NOT NULL, hours INTEGER NOT NULL, '
     #                           'positions INTEGER DEFAULT 0, incoming_positions INTEGER DEFAULT 0)')
-    u = execute_read_query(connection, 'select * from price where email = "dima@mail.ru"')
+    u = execute_read_query(connection, 'select * from users')
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
     # us = execute_read_query(connection, 'select * from PRICE')

@@ -53,12 +53,9 @@ def data_employees():
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
     workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
-    # anketa = execute_read_query(connection, f'SELECT email FROM employees WHERE email = "{session["email"]}"')
-    # if not anketa:
-    #     return redirect(url_for('data_employees'))
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
-        if 'get_salary' in request.form:
+        if 'get_salary' in request.form: # Зарплата  и прочее за всё время
             sal_data = execute_read_query(connection,
                                           f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
                                           f'email = "{session["email"]}" ORDER BY date ASC')
@@ -66,7 +63,7 @@ def dashboard():
                                                f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users WHERE '
                                                f'email = "{session["email"]}"')
             sal_data = convert_salary_and_date(sal_data)
-        elif 'get_week' in request.form:
+        elif 'get_week' in request.form: # За текущую неделю
             first_day = first_day_week(current_data)
             sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users WHERE '
                                                       f'email = "{session["email"]}" and date >= "{first_day}" '
@@ -76,7 +73,7 @@ def dashboard():
                                                f'email= "{session["email"]}" and date >= "{first_day}"')
 
             sal_data = convert_salary_and_date(sal_data)
-        elif 'get_month' in request.form:
+        elif 'get_month' in request.form: # За текущий месяц
             sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
                                                       f'WHERE email = "{session["email"]}" and '
                                                       f'strftime("%m", date) >= strftime("%m", "now") '
