@@ -61,6 +61,9 @@
 <div>
 <table>
     {% if sal_data %}
+
+    <!--    Таблица для 1 и 3 отделов-->
+
     {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
     <tr>
         <th>Дата</th>
@@ -81,13 +84,17 @@
     {% endfor %}
     <tr>
         <th>Всего</th>
-        <th>{{ sum[0][1] }}</th>
-        <th>{{ sum[0][2] }}</th>
-        <th>{{ sum[0][3] }}</th>
-        <th>{{ sum[0][0] }} руб</th>
+        {% for i in sum %}
+        <th>{{ i[0] }}</th>
+        <th>{{ i[1] }}</th>
+        <th>{{ i[2] }}</th>
+        <th>{{ i[3] }}</th>
+        {% endfor %}
     </tr>
 
     {% endif %}
+
+<!--    Таблица для упаковки-->
     {% if workplace[0][0] == 'Упаковка' %}
     <tr>
         <th>Дата</th>
@@ -106,9 +113,11 @@
     {% endfor %}
     <tr>
         <th>Всего</th>
-        <th>{{ sum[0][1] }}</th>
-        <th>{{ sum[0][2] }}</th>
-        <th>{{ sum[0][0] }} руб</th>
+        {% for i in sum %}
+        <th>{{ sum[1] }}</th>
+        <th>{{ sum[2] }}</th>
+        <th>{{ sum[0] }} руб</th>
+        {% endfor %}
     </tr>
 
     {% endif %}

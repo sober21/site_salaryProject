@@ -4,12 +4,9 @@ from sqlite3 import Error
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from main.app import render_date
+from main.app import render_date, convert_salary_and_date
 
 current_data = date.today()
-
-
-
 
 
 def get_first_day_week(cur_date) -> str:
@@ -75,11 +72,31 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-def get_salary_data(email: str, connect=connection):
-    result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
-                                   f'WHERE email = "{email}" and '
-                                   f'strftime("%m", date) >= strftime("%m", "now") '
-                                   f'ORDER BY date ASC')
+def get_salary_data_week(email: str, first_day, connect=connection):
+    result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions '
+                                         f'FROM salary_users WHERE email = "{email}" and date >= "{first_day}" '
+                                         f'ORDER BY date ASC')
+    return result
+
+
+def get_sum_of_week(email: str, first_day, connect=connection):
+    result = execute_read_query(connect, f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
+                                         f'FROM salary_users WHERE email= "{email}" and date >= "{first_day}"')
+    return result
+
+
+def get_sum_of_month(email: str, connect=connection):
+    result = execute_read_query(connect, f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
+                                         f'FROM salary_users WHERE email = "{email}" '
+                                         f'and strftime("%m", date) >= strftime("%m", "now")')
+    return result
+
+
+def get_salary_data_month(email: str, connect=connection):
+    result = execute_read_query(connect,
+                                f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
+                                f'WHERE email = "{email}" and '
+                                f'strftime("%m", date) >= strftime("%m", "now")')
     return result
 
 
@@ -111,7 +128,7 @@ create_salary = f"""
 # execute_query((connection, 'DELETE FROM salary_users WHERE id = 2'))
 
 # Все таблицы в базе
-table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')# все таблицы
+table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
 # for i in table:
 #     print(i)
 
@@ -153,7 +170,7 @@ if __name__ == '__main__':
     # execute_query(connection, 'CREATE TABLE salary_users (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, '
     #                           'date TEXT UNIQUE, salary INTEGER NOT NULL, hours INTEGER NOT NULL, '
     #                           'positions INTEGER DEFAULT 0, incoming_positions INTEGER DEFAULT 0)')
-    u = execute_read_query(connection, 'select * from users')
+
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
     # us = execute_read_query(connection, 'select * from PRICE')
@@ -161,5 +178,13 @@ if __name__ == '__main__':
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
-    for i in u:
-        print(i)
+
+    d = get_sum_of_month('dima@mail.ru')
+    print(d)
+
+    us = convert_salary_and_date(d, 'Упаковка')
+    print(us)
+    for i in us:
+        print(i[0])
+        print(i[1])
+        print(i[2])

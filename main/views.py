@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from main.app import current_data, salary_of_one_day, render_date, convert_salary_and_date, \
     valid_register_data, get_hour_price, get_position_price
 from main.my_database import execute_query, connection, execute_read_query, \
-    get_first_day_week, get_salary_data
+    get_first_day_week, get_salary_data_week, get_sum_of_week, get_salary_data_month, get_sum_of_month
 
 app = Flask(__name__)
 
@@ -54,8 +54,8 @@ def data_employees():
 def dashboard():
     workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
     if request.method == 'POST':
-        sal_today, sal_data, sum_of_period = None, None, None
-        if 'get_salary' in request.form: # Зарплата  и прочее за всё время
+        sal_today, sal_data, sum_of_period = None, 0, None
+        if 'get_salary' in request.form:  # Зарплата и прочее за всё время
             sal_data = execute_read_query(connection,
                                           f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
                                           f'email = "{session["email"]}" ORDER BY date ASC')
@@ -63,24 +63,17 @@ def dashboard():
                                                f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users WHERE '
                                                f'email = "{session["email"]}"')
             sal_data = convert_salary_and_date(sal_data)
-        elif 'get_week' in request.form: # За текущую неделю
+        elif 'get_week' in request.form:  # За текущую неделю
             first_day_week = get_first_day_week(current_data)
-            sal_data = get_salary_data(session["email"])
-            sum_of_period = execute_read_query(connection,
-                                               f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users WHERE '
-                                               f'email= "{session["email"]}" and date >= "{first_day_week}"')
-
-            sal_data = convert_salary_and_date(sal_data)
-        elif 'get_month' in request.form: # За текущий месяц
-            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
-                                                      f'WHERE email = "{session["email"]}" and '
-                                                      f'strftime("%m", date) >= strftime("%m", "now") '
-                                                      f'ORDER BY date ASC')
-            sum_of_period = execute_read_query(connection,
-                                               f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users '
-                                               f'WHERE email = "{session["email"]}" and '
-                                               f'strftime("%m", date) >= strftime("%m", "now")')
-            sal_data = convert_salary_and_date(sal_data)
+            sal_data = get_salary_data_week(email=session["email"], first_day=first_day_week)
+            sum_of_period = get_sum_of_week(email=session['email'], first_day=first_day_week)
+            sal_data = convert_salary_and_date(sal_data, workplace=workplace)
+            sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
+        elif 'get_month' in request.form:  # За текущий месяц
+            sal_data = get_salary_data_month(email=session['email'])
+            sum_of_period = get_sum_of_month(email=session['email'])
+            sal_data = convert_salary_and_date(sal_data, workplace=workplace)
+            sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
             date = request.form.get('date')
             hours = request.form.get('hours')
@@ -96,14 +89,17 @@ def dashboard():
             salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
                                        pr_hour=pr_hour, pr_pos=pr_pos)
 
-            execute_query(connection, f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
-                                      f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
-                                      f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
+            execute_query(connection,
+                          f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
+                          f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
+                          f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
             date = render_date(date)
             sal_today = f'{date}: {int(salary)} руб.'
-        return render_template('dashboard.html', workplace=workplace, cur_date=current_data, sal_data=sal_data, sal_today=sal_today,
+        return render_template('dashboard.html', workplace=workplace, cur_date=current_data, sal_data=sal_data,
+                               sal_today=sal_today,
                                sum=sum_of_period, email=session['email'])
-    return render_template('dashboard.html', workplace=workplace,cur_date=current_data, title='Добавить', email=session['email'])
+    return render_template('dashboard.html', workplace=workplace, cur_date=current_data, title='Добавить',
+                           email=session['email'])
 
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -140,8 +136,9 @@ def logout():
 @app.route('/register', methods=['POST', 'GET'])
 def register():
     msg = ''
-    if request.method == 'POST' and all([request.form['email'], request.form['password'], request.form['replay_password'],
-                                         request.form['username'], request.form['job_title'], request.form['workplace']]):
+    if request.method == 'POST' and all(
+            [request.form['email'], request.form['password'], request.form['replay_password'],
+             request.form['username'], request.form['job_title'], request.form['workplace']]):
         password = request.form['password']
         replay_password = request.form['replay_password']
         email = request.form['email']

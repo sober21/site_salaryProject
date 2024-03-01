@@ -4,20 +4,16 @@ from string import ascii_lowercase, ascii_uppercase
 
 locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
-
-
 PRICE_OF_HOUR = 91
 PRICE_OF_POSITION = 3.7
 
 current_data = date.today()
 
 
-
-
-
 def get_username(acc):
     res = [i[1] for i in acc]
     return res
+
 
 def get_hour_price(job_title: str) -> int:
     # Возращает стоимость часа в зависимости от должности
@@ -93,10 +89,24 @@ def get_email(acc):
     return res
 
 
-def convert_salary_and_date(array):
+def convert_salary_and_date(array, workplace, sums=False):
     # Поочерёдно возвращает форматированную дату, часы, позиции, приход и форматированную зарплату
-    for dt, hours, salary, positions, incoming_positions in array:
-        yield render_date(dt), hours, positions, incoming_positions, f'{int(float(salary))} руб'
+    if array:
+        if workplace[0][0] in ['1 отдел', '3 отдел']:
+            if sums:
+                for salary, hours, positions, incoming_positions in array:
+                    yield hours, positions, incoming_positions, f'{int(float(salary))} руб'
+            else:
+                for dt, hours, salary, positions, incoming_positions in array:
+                    yield render_date(dt), hours, positions, incoming_positions, f'{int(float(salary))} руб'
+        elif workplace[0][0] == 'Упаковка':
+            if sums:
+                for salary, hours, positions, incoming_positions in array:
+                    yield hours, positions, f'{int(float(salary))} руб'
+            else:
+                for dt, hours, salary, positions, incoming_positions in array:
+                    yield render_date(dt), hours, positions, f'{int(float(salary))} руб'
+    yield 0, 0, 0, 0, 0
 
 
 def change_month_name(month):
