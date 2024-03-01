@@ -4,10 +4,15 @@ from string import ascii_lowercase, ascii_uppercase
 
 locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 
+
+
 PRICE_OF_HOUR = 91
 PRICE_OF_POSITION = 3.7
 
 current_data = date.today()
+
+
+
 
 
 def get_username(acc):

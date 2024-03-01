@@ -9,7 +9,10 @@ from main.app import render_date
 current_data = date.today()
 
 
-def first_day_week(cur_date) -> str:
+
+
+
+def get_first_day_week(cur_date) -> str:
     # Возвращает первую день текущей недели
     cur_weekday = cur_date.isoweekday()
     if cur_weekday == 1:
@@ -70,6 +73,14 @@ def execute_read_query(connection, query):
         return result
     except Error as e:
         print(f"The error '{e}' occurred")
+
+
+def get_salary_data(email: str, connect=connection):
+    result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
+                                   f'WHERE email = "{email}" and '
+                                   f'strftime("%m", date) >= strftime("%m", "now") '
+                                   f'ORDER BY date ASC')
+    return result
 
 
 create_salary_users_table = """

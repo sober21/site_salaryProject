@@ -6,7 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from main.app import current_data, salary_of_one_day, render_date, convert_salary_and_date, \
     valid_register_data, get_hour_price, get_position_price
 from main.my_database import execute_query, connection, execute_read_query, \
-    first_day_week
+    get_first_day_week, get_salary_data
 
 app = Flask(__name__)
 
@@ -64,13 +64,11 @@ def dashboard():
                                                f'email = "{session["email"]}"')
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_week' in request.form: # За текущую неделю
-            first_day = first_day_week(current_data)
-            sal_data = execute_read_query(connection, f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users WHERE '
-                                                      f'email = "{session["email"]}" and date >= "{first_day}" '
-                                                      f'ORDER BY date ASC')
+            first_day_week = get_first_day_week(current_data)
+            sal_data = get_salary_data(session["email"])
             sum_of_period = execute_read_query(connection,
                                                f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users WHERE '
-                                               f'email= "{session["email"]}" and date >= "{first_day}"')
+                                               f'email= "{session["email"]}" and date >= "{first_day_week}"')
 
             sal_data = convert_salary_and_date(sal_data)
         elif 'get_month' in request.form: # За текущий месяц
