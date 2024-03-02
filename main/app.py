@@ -107,7 +107,7 @@ def convert_salary_and_date(array, workplace, sums=False):
                 for dt, hours, salary, positions, incoming_positions in array:
                     yield render_date(dt), hours, positions, f'{int(float(salary))} руб'
     else:
-        return 0,0,0,0
+        yield 0, 0, 0, 0
 
 
 def change_month_name(month):

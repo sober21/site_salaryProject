@@ -1,5 +1,8 @@
+from datetime import datetime, timedelta
+
 from app import (is_valid_password, is_valid_username, is_valid_email, valid_register_data, get_position_price,
                  get_hour_price)
+from main.my_database import execute_read_query, connection, current_data
 
 if __name__ == '__main__':
     # Тесты на правильность имени пользователя
@@ -81,3 +84,69 @@ if __name__ == '__main__':
     assert get_position_price('1 отдел') == 3.7
     assert get_position_price('3 отдел') == 4.7
     assert get_position_price('Упаковка') == 3
+
+
+    def em(email, month):
+
+        def mon(action):
+            nonlocal month
+            if action == '+':
+                month += 1
+            elif action == '-':
+                month -= 1
+
+            def res():
+                return email + month
+
+            return res()
+
+        return mon
+
+
+    def test_get_salary_data_month(email: str, cur_data: datetime, connect=connection):
+        def f1(action):
+            nonlocal cur_data
+            if action == '+':
+
+                cur_data = datetime(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+            else:
+                cur_data = datetime(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
+
+            def f2():
+                result = execute_read_query(connect,
+                                            f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
+                                            f'WHERE email = "{email}" and '
+                                            f'strftime("%m", date) == strftime("%m", "{cur_data}")')
+                return result
+
+            return f2()
+
+        return f1
+
+
+    def test_get_sum_of_month(email: str, cur_data: datetime, connect=connection):
+        def f1(action):
+            nonlocal cur_data
+            if action == '+':
+
+                cur_data = datetime(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+            else:
+                cur_data = datetime(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
+
+            def f2():
+                result = execute_read_query(connect,
+                                            f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
+                                            f'FROM salary_users WHERE email = "{email}" '
+                                            f'and strftime("%m", date) == strftime("%m", "{cur_data}")')
+                return result
+
+            return f2()
+
+        return f1
+
+    c_date = current_data
+    sal_data = test_get_sum_of_month('max@mail.ru', cur_data=c_date)
+    print(sal_data('-'))
+    print(sal_data('-'))
+    print(sal_data('+'))
+    print(sal_data('+'))

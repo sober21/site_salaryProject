@@ -85,50 +85,91 @@ def get_sum_of_week(email: str, first_day, connect=connection):
     return result
 
 
-def get_sum_of_month(email: str, connect=connection):
-    result = execute_read_query(connect, f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
-                                         f'FROM salary_users WHERE email = "{email}" '
-                                         f'and strftime("%m", date) >= strftime("%m", "now")')
-    return result
+# def get_sum_of_month(email: str, connect=connection):
+#     result = execute_read_query(connect, f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
+#                                          f'FROM salary_users WHERE email = "{email}" '
+#                                          f'and strftime("%m", date) >= strftime("%m", "now")')
+#     return result
 
 
-def get_salary_data_month(email: str, connect=connection):
-    result = execute_read_query(connect,
-                                f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
-                                f'WHERE email = "{email}" and '
-                                f'strftime("%m", date) >= strftime("%m", "now")')
-    return result
+def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
+
+    def action(act=None):
+        nonlocal cur_data
+        if act == '+':
+            cur_data = datetime(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+        elif act == '-':
+            cur_data = datetime(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
+
+        def f2():
+            result = execute_read_query(connect,
+                                        f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
+                                        f'FROM salary_users WHERE email = "{email}" '
+                                        f'and strftime("%m", date) == strftime("%m", "{cur_data}")')
+            return result
+
+        return f2()
+
+    return action
 
 
-def get_test_month(email, connect=connection):
-    def get_month(cur_month):
-        result = execute_read_query(connect,
-                                    f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
-                                    f'WHERE email = "{email}" and '
-                                    f'strftime("%m", date) == strftime("%m", "{cur_month}")')
-        return result
-    return get_month
+# def get_salary_data_month(email: str, connect=connection):
+#     result = execute_read_query(connect,
+#                                 f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
+#                                 f'WHERE email = "{email}" and '
+#                                 f'strftime("%m", date) >= strftime("%m", "now")')
+#     return result
 
 
+def get_salary_data_month(email: str, cur_data: datetime, connect=connection):
+    def action(act=None):
+        nonlocal cur_data
+        if act == '+':
+            cur_data = datetime(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+        elif act == '-':
+            cur_data = datetime(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
 
-create_salary_users_table = """
-CREATE TABLE IF NOT EXISTS salary_users (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  email TEXT,
-  date TEXT UNIQUE,
-  salary INTEGER,
-  hours INTEGER,
-  positions INTEGER
-);
-"""
+        def wrapper():
+            result = execute_read_query(connect,
+                                        f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
+                                        f'WHERE email = "{email}" and '
+                                        f'strftime("%m", date) == strftime("%m", "{cur_data}")')
+            return result
 
-create_salary = f"""
-        INSERT INTO
-          salary (date, amount)
-        VALUES
-          ('2024-02-13', '1000')
-          ;
-        """
+        return wrapper()
+
+    return action
+
+
+# def get_test_month(email, connect=connection):
+#     def get_month(cur_month):
+#         result = execute_read_query(connect,
+#                                     f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
+#                                     f'WHERE email = "{email}" and '
+#                                     f'strftime("%m", date) == strftime("%m", "{cur_month}")')
+#         return result
+#
+#     return get_month
+
+
+# create_salary_users_table = """
+# CREATE TABLE IF NOT EXISTS salary_users (
+#   id INTEGER PRIMARY KEY AUTOINCREMENT,
+#   email TEXT,
+#   date TEXT UNIQUE,
+#   salary INTEGER,
+#   hours INTEGER,
+#   positions INTEGER
+# );
+# """
+
+# create_salary = f"""
+#         INSERT INTO
+#           salary (date, amount)
+#         VALUES
+#           ('2024-02-13', '1000')
+#           ;
+#         """
 # Удаление таблицы
 # execute_query(connection, 'DROP TABLE salary_users')
 
@@ -139,7 +180,7 @@ create_salary = f"""
 # execute_query((connection, 'DELETE FROM salary_users WHERE id = 2'))
 
 # Все таблицы в базе
-table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+# table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
 # for i in table:
 #     print(i)
 
@@ -160,16 +201,16 @@ table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="
 # users = execute_read_query(connection, select)
 # select_post_description = "SELECT amount FROM salary WHERE id = 2"
 # post_description = execute_read_query(connection, select_post_description)
-add_column = 'ALTER TABLE salary_users ADD hours INT NOT NULL DEFAULT 0'
-rename_column = 'ALTER TABLE salary_users RENAME COLUMN amount TO salary'
-update_post_description = """
-UPDATE
-  salary
-SET
-  amount = 1000
-WHERE
-  id = 2
-"""
+# add_column = 'ALTER TABLE salary_users ADD hours INT NOT NULL DEFAULT 0'
+# rename_column = 'ALTER TABLE salary_users RENAME COLUMN amount TO salary'
+# update_post_description = """
+# UPDATE
+#   salary
+# SET
+#   amount = 1000
+# WHERE
+#   id = 2
+# """
 # delete_date = f'DELETE FROM salary WHERE id = 2'
 # execute_query(connection, delete_date)
 if __name__ == '__main__':
@@ -190,13 +231,4 @@ if __name__ == '__main__':
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
 
-    d = get_sum_of_week(email='dima@mail.ru', first_day=get_first_day_week(current_data))
-    print(d)
-    w = execute_read_query(connection, f'SELECT workplace from users WHERE email = "dima@mail.ru"')
-
-    us = convert_salary_and_date(d, w, sums=True)
-    print(us)
-    for i in us:
-        print(i[0])
-        print(i[1])
-        print(i[2])
+    pass

@@ -53,6 +53,7 @@ def data_employees():
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
     workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
+    req = request.get_data(parse_form_data=True, as_text=True)
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_week' in request.form:  # За текущую неделю
@@ -63,11 +64,24 @@ def dashboard():
                 sal_data = convert_salary_and_date(sal_data, workplace=workplace)
                 sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
         elif 'get_month' in request.form:  # За текущий месяц
-            if get_salary_data_month(email=session['email']):
-                sal_data = get_salary_data_month(email=session['email'])
-                sum_of_period = get_sum_of_month(email=session['email'])
-                sal_data = convert_salary_and_date(sal_data, workplace=workplace)
-                sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
+            if get_salary_data_month(email=session['email'], cur_data=current_data)():
+                sal_data = get_salary_data_month(email=session['email'], cur_data=current_data)
+                sum_of_period = get_sum_of_month(email=session['email'], cur_data=current_data)
+                sal_data = convert_salary_and_date(sal_data(), workplace=workplace)
+                sum_of_period = convert_salary_and_date(sum_of_period(), workplace=workplace, sums=True)
+        elif 'last_month' in request.form:  # За текущий месяц
+            req = request.data
+            if get_salary_data_month(email=session['email'], cur_data=current_data)('-'):
+                sal_data = get_salary_data_month(email=session['email'], cur_data=current_data)
+                sum_of_period = get_sum_of_month(email=session['email'], cur_data=current_data)
+                sal_data = convert_salary_and_date(sal_data('-'), workplace=workplace)
+                sum_of_period = convert_salary_and_date(sum_of_period('-'), workplace=workplace, sums=True)
+        elif 'next_month' in request.form:  # За текущий месяц
+            if get_salary_data_month(email=session['email'], cur_data=current_data)('+'):
+                sal_data = get_salary_data_month(email=session['email'], cur_data=current_data)
+                sum_of_period = get_sum_of_month(email=session['email'], cur_data=current_data)
+                sal_data = convert_salary_and_date(sal_data('+'), workplace=workplace)
+                sum_of_period = convert_salary_and_date(sum_of_period('+'), workplace=workplace, sums=True)
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
             date = request.form.get('date')
             hours = request.form.get('hours')
@@ -81,7 +95,7 @@ def dashboard():
                                        f'SELECT hour_price, position_price FROM price WHERE email = "{session["email"]}"')
             pr_hour, pr_pos = price[0][0], price[0][1]
             salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
-                                       pr_hour=pr_hour, pr_pos=pr_pos)
+                                       pr_hour=pr_hour, pr_pos=pr_pos, )
 
             execute_query(connection,
                           f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
@@ -91,7 +105,7 @@ def dashboard():
             sal_today = f'{date}: {int(salary)} руб.'
         return render_template('dashboard.html', workplace=workplace, cur_date=current_data, sal_data=sal_data,
                                sal_today=sal_today,
-                               sum=sum_of_period, email=session['email'])
+                               sum=sum_of_period, email=session['email'], req=req)
     return render_template('dashboard.html', workplace=workplace, cur_date=current_data, title='Добавить',
                            email=session['email'])
 

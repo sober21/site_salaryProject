@@ -11,6 +11,7 @@
 <body>
 {% block content %}
 <h1>Вы вошли как {{ email }}</h1>
+{{ req }}
 {% if workplace[0][0]=='Упаковка' %}
 <div class="div-for-form">
 <form class="salary" action="" method="post">
