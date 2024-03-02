@@ -42,18 +42,16 @@
 {% endif %}
 <div>
 <table>
-<tr><td><form method="post">
-    <input type="submit" name="get_salary" value="Показать">
-</form></td>
+<tr>
 <td><form method="post">
-    <input type="submit" name="last_week" value="<">
+    <input type="submit" name="last_week" value="<<">
     <input type="submit" name="get_week" value="Эта неделя">
-    <input type="submit" name="next_week" value=">">
+    <input type="submit" name="next_week" value=">>">
 </form></td>
 <td><form method="post">
-    <input type="submit" name="last_month" value="<">
+    <input type="submit" name="last_month" value="<<">
     <input type="submit" name="get_month" value="Этот месяц">
-    <input type="submit" name="next_month" value=">">
+    <input type="submit" name="next_month" value=">>">
 </form></td>
 </tr>
 </table>
@@ -107,16 +105,16 @@
         <td>{{ i[0] }}</td>
         <td>{{ i[1] }}</td>
         <td>{{ i[2] }}</td>
-        <td>{{ i[4] }}</td>
+        <td>{{ i[3] }}</td>
     </tr>
 
     {% endfor %}
     <tr>
         <th>Всего</th>
         {% for i in sum %}
-        <th>{{ sum[1] }}</th>
-        <th>{{ sum[2] }}</th>
-        <th>{{ sum[0] }} руб</th>
+        <th>{{ i[0] }}</th>
+        <th>{{ i[1] }}</th>
+        <th>{{ i[2] }}</th>
         {% endfor %}
     </tr>
 

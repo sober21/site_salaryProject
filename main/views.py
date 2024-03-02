@@ -54,26 +54,20 @@ def data_employees():
 def dashboard():
     workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
     if request.method == 'POST':
-        sal_today, sal_data, sum_of_period = None, 0, None
-        if 'get_salary' in request.form:  # Зарплата и прочее за всё время
-            sal_data = execute_read_query(connection,
-                                          f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
-                                          f'email = "{session["email"]}" ORDER BY date ASC')
-            sum_of_period = execute_read_query(connection,
-                                               f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) FROM salary_users WHERE '
-                                               f'email = "{session["email"]}"')
-            sal_data = convert_salary_and_date(sal_data)
-        elif 'get_week' in request.form:  # За текущую неделю
+        sal_today, sal_data, sum_of_period = None, None, None
+        if 'get_week' in request.form:  # За текущую неделю
             first_day_week = get_first_day_week(current_data)
-            sal_data = get_salary_data_week(email=session["email"], first_day=first_day_week)
-            sum_of_period = get_sum_of_week(email=session['email'], first_day=first_day_week)
-            sal_data = convert_salary_and_date(sal_data, workplace=workplace)
-            sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
+            if get_salary_data_week(email=session["email"], first_day=first_day_week):
+                sal_data = get_salary_data_week(email=session["email"], first_day=first_day_week)
+                sum_of_period = get_sum_of_week(email=session['email'], first_day=first_day_week)
+                sal_data = convert_salary_and_date(sal_data, workplace=workplace)
+                sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
         elif 'get_month' in request.form:  # За текущий месяц
-            sal_data = get_salary_data_month(email=session['email'])
-            sum_of_period = get_sum_of_month(email=session['email'])
-            sal_data = convert_salary_and_date(sal_data, workplace=workplace)
-            sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
+            if get_salary_data_month(email=session['email']):
+                sal_data = get_salary_data_month(email=session['email'])
+                sum_of_period = get_sum_of_month(email=session['email'])
+                sal_data = convert_salary_and_date(sal_data, workplace=workplace)
+                sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
             date = request.form.get('date')
             hours = request.form.get('hours')

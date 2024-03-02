@@ -100,6 +100,17 @@ def get_salary_data_month(email: str, connect=connection):
     return result
 
 
+def get_test_month(email, connect=connection):
+    def get_month(cur_month):
+        result = execute_read_query(connect,
+                                    f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
+                                    f'WHERE email = "{email}" and '
+                                    f'strftime("%m", date) == strftime("%m", "{cur_month}")')
+        return result
+    return get_month
+
+
+
 create_salary_users_table = """
 CREATE TABLE IF NOT EXISTS salary_users (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -173,16 +184,17 @@ if __name__ == '__main__':
 
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
-    # us = execute_read_query(connection, 'select * from PRICE')
+    # us = execute_read_query(connection, 'select workplace from users WHERE email = "dima@mail.ru"')
     # print(us)
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
 
-    d = get_sum_of_month('dima@mail.ru')
+    d = get_sum_of_week(email='dima@mail.ru', first_day=get_first_day_week(current_data))
     print(d)
+    w = execute_read_query(connection, f'SELECT workplace from users WHERE email = "dima@mail.ru"')
 
-    us = convert_salary_and_date(d, 'Упаковка')
+    us = convert_salary_and_date(d, w, sums=True)
     print(us)
     for i in us:
         print(i[0])
