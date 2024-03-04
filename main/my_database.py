@@ -6,8 +6,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 from main.app import render_date, convert_salary_and_date
 
-current_data = date.today()
-
 
 def get_first_day_week(cur_date) -> str:
     # Возвращает первую день текущей недели
@@ -92,14 +90,14 @@ def get_sum_of_week(email: str, first_day, connect=connection):
 #     return result
 
 
-def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
+def get_sum_of_month(email: str, cur_data: date, connect=connection):
 
     def action(act=None):
         nonlocal cur_data
         if act == '+':
-            cur_data = datetime(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+            cur_data = date(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
         elif act == '-':
-            cur_data = datetime(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
+            cur_data = date(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
 
         def f2():
             result = execute_read_query(connect,
@@ -121,20 +119,20 @@ def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
 #     return result
 
 
-def get_salary_data_month(email: str, cur_data: datetime, connect=connection):
+def get_salary_data_month(email: str, cur_data: date, connect=connection):
     def action(act=None):
         nonlocal cur_data
         if act == '+':
-            cur_data = datetime(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+            cur_data = date(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
         elif act == '-':
-            cur_data = datetime(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
+            cur_data = date(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
 
         def wrapper():
             result = execute_read_query(connect,
                                         f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
                                         f'WHERE email = "{email}" and '
                                         f'strftime("%m", date) == strftime("%m", "{cur_data}")')
-            return result
+            return result, cur_data
 
         return wrapper()
 
@@ -231,4 +229,9 @@ if __name__ == '__main__':
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
 
-    pass
+
+    us = get_salary_data_month('max@mail.ru', cur_data=current_data)
+    u, d = us('-')
+    print(u)
+    print(d)
+

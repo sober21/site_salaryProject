@@ -1,87 +1,60 @@
 import os
+from datetime import date
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from main.app import current_data, salary_of_one_day, render_date, convert_salary_and_date, \
+from main.app import salary_of_one_day, render_date, convert_salary_and_date, \
     valid_register_data, get_hour_price, get_position_price
 from main.my_database import execute_query, connection, execute_read_query, \
     get_first_day_week, get_salary_data_week, get_sum_of_week, get_salary_data_month, get_sum_of_month
 
 app = Flask(__name__)
 
-current_data = current_data
 app.secret_key = os.urandom(23).hex()
-
+current_date = date.today()
+user_date = date.today()
 
 @app.route("/", methods=["POST", "GET"])
 def index():
     if 'email' in session and 'password' in session:
         return redirect(url_for('dashboard'))
     if request.method == 'POST':
-        date = request.form.get('date')
+        ind_date = request.form.get('date')
         hours = request.form.get('hours')
         positions = request.form.get('positions')
         mens = request.form.get('mens')
         salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=0)
-        date = render_date(date)
+        ind_date = render_date(ind_date)
         res = int(salary)
-        return render_template('index.html', cur_date=current_data,
-                               title='Главная страница', date=date, res=res)
-    return render_template('index.html', cur_date=current_data, title='Главная страница')
-
-
-@app.route('/data_employees', methods=['POST', 'GET'])
-def data_employees():
-    if request.method == 'POST':
-        try:
-            if all([request.form['name'], request.form['hour_price'], request.form['position_price'],
-                    request.form['job_title'], request.form['workplace']]):
-                name, hour_price, position_price, job_title, workplace = request.form['name'], request.form[
-                    'hour_price'], \
-                    request.form['position_price'], request.form['job_title'], request.form['workplace']
-                execute_query(connection,
-                              f'insert into employees (email, name, job_title, workplace, hour_price, position_price) '
-                              f'values ("{session["email"]}", "{name}", "{job_title}", "{workplace}", {hour_price}, {position_price})')
-
-                return redirect(url_for('dashboard'))
-        except KeyError:
-            pass
-    return render_template('data_employees.html')
+        return render_template('index.html',
+                               title='Главная страница', date=ind_date, res=res)
+    return render_template('index.html', title='Главная страница')
 
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
+    cur_date = current_date
+    global user_date
+    action = None
     workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
-    req = request.get_data(parse_form_data=True, as_text=True)
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
         if 'get_week' in request.form:  # За текущую неделю
-            first_day_week = get_first_day_week(current_data)
+            first_day_week = get_first_day_week(user_date)
             if get_salary_data_week(email=session["email"], first_day=first_day_week):
                 sal_data = get_salary_data_week(email=session["email"], first_day=first_day_week)
                 sum_of_period = get_sum_of_week(email=session['email'], first_day=first_day_week)
                 sal_data = convert_salary_and_date(sal_data, workplace=workplace)
                 sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
-        elif 'get_month' in request.form:  # За текущий месяц
-            if get_salary_data_month(email=session['email'], cur_data=current_data)():
-                sal_data = get_salary_data_month(email=session['email'], cur_data=current_data)
-                sum_of_period = get_sum_of_month(email=session['email'], cur_data=current_data)
-                sal_data = convert_salary_and_date(sal_data(), workplace=workplace)
-                sum_of_period = convert_salary_and_date(sum_of_period(), workplace=workplace, sums=True)
-        elif 'last_month' in request.form:  # За текущий месяц
-            req = request.data
-            if get_salary_data_month(email=session['email'], cur_data=current_data)('-'):
-                sal_data = get_salary_data_month(email=session['email'], cur_data=current_data)
-                sum_of_period = get_sum_of_month(email=session['email'], cur_data=current_data)
-                sal_data = convert_salary_and_date(sal_data('-'), workplace=workplace)
-                sum_of_period = convert_salary_and_date(sum_of_period('-'), workplace=workplace, sums=True)
-        elif 'next_month' in request.form:  # За текущий месяц
-            if get_salary_data_month(email=session['email'], cur_data=current_data)('+'):
-                sal_data = get_salary_data_month(email=session['email'], cur_data=current_data)
-                sum_of_period = get_sum_of_month(email=session['email'], cur_data=current_data)
-                sal_data = convert_salary_and_date(sal_data('+'), workplace=workplace)
-                sum_of_period = convert_salary_and_date(sum_of_period('+'), workplace=workplace, sums=True)
+        action = '+' if 'next_month' in request.form else ('-' if 'last_month' in request.form else None)
+        if 'get_month' in request.form or 'next_month' in request.form or 'last_month' in request.form:  # За текущий месяц
+            if get_salary_data_month(email=session['email'], cur_data=user_date)(action)[0]:
+                sal_data, cur = get_salary_data_month(email=session['email'], cur_data=user_date)(action)
+                sum_of_period = get_sum_of_month(email=session['email'], cur_data=user_date)
+                sal_data = convert_salary_and_date(sal_data, workplace=workplace)
+                sum_of_period = convert_salary_and_date(sum_of_period(action), workplace=workplace, sums=True)
+                user_date = cur
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
             date = request.form.get('date')
             hours = request.form.get('hours')
@@ -103,10 +76,10 @@ def dashboard():
                           f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
             date = render_date(date)
             sal_today = f'{date}: {int(salary)} руб.'
-        return render_template('dashboard.html', workplace=workplace, cur_date=current_data, sal_data=sal_data,
+        return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, sal_data=sal_data,
                                sal_today=sal_today,
-                               sum=sum_of_period, email=session['email'], req=req)
-    return render_template('dashboard.html', workplace=workplace, cur_date=current_data, title='Добавить',
+                               sum=sum_of_period, email=session['email'])
+    return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, title='Добавить',
                            email=session['email'])
 
 
