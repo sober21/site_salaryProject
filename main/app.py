@@ -7,7 +7,8 @@ locale.setlocale(locale.LC_ALL, 'ru_RU.UTF-8')
 PRICE_OF_HOUR = 91
 PRICE_OF_POSITION = 3.7
 
-current_date = date.today()
+current_date = datetime.today()
+
 
 def get_username(acc):
     res = [i[1] for i in acc]

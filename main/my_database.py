@@ -7,28 +7,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from main.app import render_date, convert_salary_and_date
 
 
-def get_first_day_week(cur_date) -> str:
-    # Возвращает первую день текущей недели
-    cur_weekday = cur_date.isoweekday()
-    if cur_weekday == 1:
-        return cur_date.strftime('%Y-%m-%d')
-    else:
-        while True:
-            cur_date = cur_date - timedelta(days=1)
-            if cur_date.isoweekday() == 1:
-                return cur_date.strftime('%Y-%m-%d')
+def get_first_day_week(cur_date: datetime) -> datetime:
+    # Возвращает первый день недели
+    while True:
+        if cur_date.isoweekday() == 1:
+            return cur_date
+        cur_date = cur_date - timedelta(days=1)
 
 
 def get_date_and_salary(user, *args):
     # Печатает дату и зарплату для конкретного пользователя
     data = execute_read_query(connection, f'SELECT {",".join(args)} FROM salary_users WHERE username = "{user}"')
-    for date, salary in data:
-        print(f'{render_date(date)}: {int(float(salary))} руб.')
-
-
-def add_query(table, column, value):
-    '''Создаёт запрос на вставку'''
-    return f'REPLACE INTO {table} {column} VALUES {value};'
+    for a_date, salary in data:
+        print(f'{render_date(a_date)}: {int(float(salary))} руб.')
 
 
 def create_connection(db_dir):
@@ -70,53 +61,76 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-def get_salary_data_week(email: str, first_day, connect=connection):
-    result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions '
-                                         f'FROM salary_users WHERE email = "{email}" and date >= "{first_day}" '
-                                         f'ORDER BY date ASC')
-    return result
-
-
-def get_sum_of_week(email: str, first_day, connect=connection):
-    result = execute_read_query(connect, f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
-                                         f'FROM salary_users WHERE email= "{email}" and date >= "{first_day}"')
-    return result
-
-
-# def get_sum_of_month(email: str, connect=connection):
-#     result = execute_read_query(connect, f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
-#                                          f'FROM salary_users WHERE email = "{email}" '
-#                                          f'and strftime("%m", date) >= strftime("%m", "now")')
+# def get_salary_data_week(email: str, first_day, connect=connection):
+#     result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions '
+#                                          f'FROM salary_users WHERE email = "{email}" and date >= "{first_day}" '
+#                                          f'ORDER BY date ASC')
 #     return result
 
 
-def get_sum_of_month(email: str, cur_data: date, connect=connection):
+def get_salary_data_week(email: str, first_day: datetime, connect=connection):
+    def action(act=None):
+        nonlocal first_day
+
+        if act == '+':
+            first_day = first_day + timedelta(weeks=1)
+        elif act == '-':
+            first_day = first_day - timedelta(weeks=1)
+
+        def wrapper():
+            result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions '
+                                                 f'FROM salary_users WHERE email = "{email}" and date >= "{first_day}" '
+                                                 f'ORDER BY date ASC')
+            return result, first_day
+
+        return wrapper()
+
+    return action
+
+
+def get_sum_of_week(email: str, first_day, connect=connection):
+    def action(act=None):
+        nonlocal first_day
+        if act == '+':
+            first_day = first_day + timedelta(weeks=1)
+        elif act == '-':
+            first_day = first_day - timedelta(weeks=1)
+
+        def wrapper():
+            result = execute_read_query(connect,
+                                        f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
+                                        f'FROM salary_users WHERE email= "{email}" and date >= "{first_day}"')
+            return result
+
+        return wrapper()
+
+    return action
+
+# def get_sum_of_week(email: str, first_day, connect=connection):
+#     result = execute_read_query(connect, f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
+#                                          f'FROM salary_users WHERE email= "{email}" and date >= "{first_day}"')
+#     return result
+
+
+def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
 
     def action(act=None):
         nonlocal cur_data
         if act == '+':
-            cur_data = date(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+            cur_data = cur_data + timedelta()
         elif act == '-':
             cur_data = date(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
 
-        def f2():
+        def wrapper():
             result = execute_read_query(connect,
                                         f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
                                         f'FROM salary_users WHERE email = "{email}" '
                                         f'and strftime("%m", date) == strftime("%m", "{cur_data}")')
             return result
 
-        return f2()
+        return wrapper()
 
     return action
-
-
-# def get_salary_data_month(email: str, connect=connection):
-#     result = execute_read_query(connect,
-#                                 f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
-#                                 f'WHERE email = "{email}" and '
-#                                 f'strftime("%m", date) >= strftime("%m", "now")')
-#     return result
 
 
 def get_salary_data_month(email: str, cur_data: date, connect=connection):
@@ -137,17 +151,6 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
         return wrapper()
 
     return action
-
-
-# def get_test_month(email, connect=connection):
-#     def get_month(cur_month):
-#         result = execute_read_query(connect,
-#                                     f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
-#                                     f'WHERE email = "{email}" and '
-#                                     f'strftime("%m", date) == strftime("%m", "{cur_month}")')
-#         return result
-#
-#     return get_month
 
 
 # create_salary_users_table = """

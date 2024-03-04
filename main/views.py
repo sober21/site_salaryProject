@@ -1,5 +1,5 @@
 import os
-from datetime import date
+from datetime import date, datetime
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,6 +14,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(23).hex()
 current_date = date.today()
 user_date = date.today()
+
 
 @app.route("/", methods=["POST", "GET"])
 def index():
@@ -36,24 +37,27 @@ def index():
 def dashboard():
     cur_date = current_date
     global user_date
-    action = None
+    action_month = None
+    action_week = None
     workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
-        if 'get_week' in request.form:  # За текущую неделю
+        action_week = '+' if 'next_week' in request.form else ('-' if 'last_week' in request.form else None)
+        if 'get_week' in request.form or 'next_week' in request.form or 'last_week' in request.form:  # За неделю
             first_day_week = get_first_day_week(user_date)
-            if get_salary_data_week(email=session["email"], first_day=first_day_week):
-                sal_data = get_salary_data_week(email=session["email"], first_day=first_day_week)
+            if get_salary_data_week(email=session["email"], first_day=first_day_week)(action_week)[0]:
+                sal_data, cur = get_salary_data_week(email=session["email"], first_day=first_day_week)(action_week)
                 sum_of_period = get_sum_of_week(email=session['email'], first_day=first_day_week)
                 sal_data = convert_salary_and_date(sal_data, workplace=workplace)
-                sum_of_period = convert_salary_and_date(sum_of_period, workplace=workplace, sums=True)
-        action = '+' if 'next_month' in request.form else ('-' if 'last_month' in request.form else None)
-        if 'get_month' in request.form or 'next_month' in request.form or 'last_month' in request.form:  # За текущий месяц
-            if get_salary_data_month(email=session['email'], cur_data=user_date)(action)[0]:
-                sal_data, cur = get_salary_data_month(email=session['email'], cur_data=user_date)(action)
+                sum_of_period = convert_salary_and_date(sum_of_period(action_week), workplace=workplace, sums=True)
+                user_date = cur
+        action_month = '+' if 'next_month' in request.form else ('-' if 'last_month' in request.form else None)
+        if 'get_month' in request.form or 'next_month' in request.form or 'last_month' in request.form:  # За месяц
+            if get_salary_data_month(email=session['email'], cur_data=user_date)(action_month)[0]:
+                sal_data, cur = get_salary_data_month(email=session['email'], cur_data=user_date)(action_month)
                 sum_of_period = get_sum_of_month(email=session['email'], cur_data=user_date)
                 sal_data = convert_salary_and_date(sal_data, workplace=workplace)
-                sum_of_period = convert_salary_and_date(sum_of_period(action), workplace=workplace, sums=True)
+                sum_of_period = convert_salary_and_date(sum_of_period(action_month), workplace=workplace, sums=True)
                 user_date = cur
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
             date = request.form.get('date')
