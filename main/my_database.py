@@ -76,10 +76,11 @@ def get_salary_data_week(email: str, first_day: datetime, connect=connection):
             first_day = first_day + timedelta(weeks=1)
         elif act == '-':
             first_day = first_day - timedelta(weeks=1)
+        last_day = first_day + timedelta(weeks=1)
 
         def wrapper():
             result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions '
-                                                 f'FROM salary_users WHERE email = "{email}" and date >= "{first_day}" '
+                                                 f'FROM salary_users WHERE email = "{email}" and "{last_day}" > date and date >= "{first_day}" '
                                                  f'ORDER BY date ASC')
             return result, first_day
 
@@ -231,10 +232,7 @@ if __name__ == '__main__':
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
+    pass
 
 
-    us = get_salary_data_month('max@mail.ru', cur_data=current_data)
-    u, d = us('-')
-    print(u)
-    print(d)
 
