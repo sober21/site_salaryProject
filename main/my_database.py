@@ -1,3 +1,4 @@
+import calendar
 from datetime import datetime, date, timedelta
 import sqlite3
 from sqlite3 import Error
@@ -96,16 +97,18 @@ def get_sum_of_week(email: str, first_day, connect=connection):
             first_day = first_day + timedelta(weeks=1)
         elif act == '-':
             first_day = first_day - timedelta(weeks=1)
+        last_day = first_day + timedelta(weeks=1)
 
         def wrapper():
             result = execute_read_query(connect,
                                         f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
-                                        f'FROM salary_users WHERE email= "{email}" and date >= "{first_day}"')
+                                        f'FROM salary_users WHERE email= "{email}" and "{last_day}" > date and date >= "{first_day}"')
             return result
 
         return wrapper()
 
     return action
+
 
 # def get_sum_of_week(email: str, first_day, connect=connection):
 #     result = execute_read_query(connect, f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
@@ -114,13 +117,12 @@ def get_sum_of_week(email: str, first_day, connect=connection):
 
 
 def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
-
     def action(act=None):
         nonlocal cur_data
         if act == '+':
-            cur_data = cur_data + timedelta()
+            cur_data = cur_data + timedelta(days=calendar.monthrange(year=cur_data.year, month=cur_data.month)[1])
         elif act == '-':
-            cur_data = date(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
+            cur_data = cur_data - timedelta(days=calendar.monthrange(year=cur_data.year, month=cur_data.month)[1])
 
         def wrapper():
             result = execute_read_query(connect,
@@ -138,9 +140,9 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
     def action(act=None):
         nonlocal cur_data
         if act == '+':
-            cur_data = date(year=cur_data.year, month=cur_data.month + 1, day=cur_data.day)
+            cur_data = cur_data + timedelta(days=calendar.monthrange(year=cur_data.year, month=cur_data.month)[1])
         elif act == '-':
-            cur_data = date(year=cur_data.year, month=cur_data.month - 1, day=cur_data.day)
+            cur_data = cur_data - timedelta(days=calendar.monthrange(year=cur_data.year, month=cur_data.month)[1])
 
         def wrapper():
             result = execute_read_query(connect,
@@ -232,7 +234,10 @@ if __name__ == '__main__':
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
-    pass
 
-
-
+    f = get_first_day_week(datetime.today())
+    m = get_salary_data_week('max@mail.ru', f)
+    print(m('+'))
+    print(m('-'))
+    print(m('-'))
+    print(m('-'))

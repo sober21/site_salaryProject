@@ -11,6 +11,10 @@
 <body>
 {% block content %}
 <h1>Вы вошли как {{ email }}</h1>
+<h3>user_date = {{ us }}</h3>
+{% if form %}
+<h3>form = {{ form }}</h3>
+{% endif %}
 {{ req }}
 {% if workplace[0][0]=='Упаковка' %}
 <div class="div-for-form">
@@ -19,7 +23,7 @@
     <input type="number" id="uhours" name="hours" min="1" max="12" placeholder="Количество отработанных часов" required>
     <label class="label-dash" for="upositions">Запаковано:</label>
     <input type="number" name="positions" id="upositions" min="1" placeholder="Количество запакованных позиций" required>
-    <input type="date" name="date" value="{{ cur_date }}" min="2024-01-01" max="{{ cur_date }}"/>
+    <input type="date" name="date" value="{{ cur_date }}" max="{{ cur_date }}">
     <input type="submit" value="Добавить">
 </form>
 </div>
@@ -36,7 +40,7 @@
     <input type="number" name="incoming_positions" id="incoming_positions" min="0" placeholder="Количество принятых позиций" required>
     <label class="label-dash" for="mens">Количество человек:</label>
     <input type="number" name="mens" id="mens" min="1" value="3" placeholder="Количество работавших людей" required>
-    <input type="date" name="date" value="{{ cur_date }}" min="2024-01-01" max="{{ cur_date }}"/>
+    <input type="date" name="date" value="{{ cur_date }}" min="2023-01-01" max="{{ cur_date }}">
     <input type="submit" value="Добавить">
 </form>
 </div>
