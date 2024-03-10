@@ -92,14 +92,14 @@ def get_email(acc):
 def convert_salary_and_date(array, workplace, sums=False):
     # Поочерёдно возвращает форматированную дату, часы, позиции, приход и форматированную зарплату
     if array:
-        if workplace[0][0] in ['1 отдел', '3 отдел']:
+        if workplace in ['1 отдел', '3 отдел']:
             if sums:
                 for salary, hours, positions, incoming_positions in array:
                     yield hours, positions, incoming_positions, f'{int(float(salary))} руб'
             else:
                 for dt, hours, salary, positions, incoming_positions in array:
                     yield render_date(dt), hours, positions, incoming_positions, f'{int(float(salary))} руб'
-        elif workplace[0][0] == 'Упаковка':
+        elif workplace == 'Упаковка':
             if sums:
                 for salary, hours, positions, incoming_positions in array:
                     yield hours, positions, f'{int(float(salary))} руб'

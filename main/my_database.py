@@ -62,13 +62,6 @@ def execute_read_query(connection, query):
         print(f"The error '{e}' occurred")
 
 
-# def get_salary_data_week(email: str, first_day, connect=connection):
-#     result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions '
-#                                          f'FROM salary_users WHERE email = "{email}" and date >= "{first_day}" '
-#                                          f'ORDER BY date ASC')
-#     return result
-
-
 def get_salary_data_week(email: str, first_day: datetime, connect=connection):
     def action(act=None):
         nonlocal first_day
@@ -110,12 +103,6 @@ def get_sum_of_week(email: str, first_day, connect=connection):
     return action
 
 
-# def get_sum_of_week(email: str, first_day, connect=connection):
-#     result = execute_read_query(connect, f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
-#                                          f'FROM salary_users WHERE email= "{email}" and date >= "{first_day}"')
-#     return result
-
-
 def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
     def action(act=None):
         nonlocal cur_data
@@ -128,7 +115,7 @@ def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
             result = execute_read_query(connect,
                                         f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
                                         f'FROM salary_users WHERE email = "{email}" '
-                                        f'and strftime("%m", date) == strftime("%m", "{cur_data}")')
+                                        f'and strftime("%Y%m", date) == strftime("%Y%m", "{cur_data}")')
             return result
 
         return wrapper()
@@ -148,7 +135,8 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
             result = execute_read_query(connect,
                                         f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
                                         f'WHERE email = "{email}" and '
-                                        f'strftime("%m", date) == strftime("%m", "{cur_data}")')
+                                        f'strftime("%Y%m", date) == strftime("%Y%m", "{cur_data}")'
+                                        f'ORDER BY date ASC')
             return result, cur_data
 
         return wrapper()
@@ -229,15 +217,19 @@ if __name__ == '__main__':
 
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
-    # us = execute_read_query(connection, 'select workplace from users WHERE email = "dima@mail.ru"')
+    # us = execute_read_query(connection, 'select username from users')
     # print(us)
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
-
-    f = get_first_day_week(datetime.today())
-    m = get_salary_data_week('max@mail.ru', f)
-    print(m('+'))
-    print(m('-'))
-    print(m('-'))
-    print(m('-'))
+    # data = execute_read_query(connection, 'Select * from salary_users where email="max@mail.ru" and date = "2024-02-27"')
+    # print(data)
+    # execute_query(connection,
+    #               f'UPDATE salary_users '
+    #               f'SET salary=salary+1000, hours=hours+1, '
+    #               f'positions=positions+{int(int(100) / int(1))}, '
+    #               f'incoming_positions=incoming_positions+{int(int(100) / int(1))} '
+    #               f'WHERE email = "max@mail.ru" and date="2024-02-27"')
+    # data = execute_read_query(connection, 'Select * from salary_users where email="max@mail.ru" and date = "2024-02-27"')
+    # print(data)
+    pass

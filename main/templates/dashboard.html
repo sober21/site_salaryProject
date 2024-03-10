@@ -10,13 +10,14 @@
 </head>
 <body>
 {% block content %}
-<h1>Вы вошли как {{ email }}</h1>
+<h1>{{ d[0] }}({{ workplace }}, {{ d[1].lower() }})</h1>
 <h3>user_date = {{ us }}</h3>
+<h3>{{ opt}}</h3>
 {% if form %}
 <h3>form = {{ form }}</h3>
 {% endif %}
 {{ req }}
-{% if workplace[0][0]=='Упаковка' %}
+{% if workplace=='Упаковка' %}
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="uhours">Часы:</label>
@@ -24,12 +25,14 @@
     <label class="label-dash" for="upositions">Запаковано:</label>
     <input type="number" name="positions" id="upositions" min="1" placeholder="Количество запакованных позиций" required>
     <input type="date" name="date" value="{{ cur_date }}" max="{{ cur_date }}">
+    <label class="label-dash" for="optional1">Дополнительно</label>
+    <input type="checkbox" name="optional" id="optional1">
     <input type="submit" value="Добавить">
 </form>
 </div>
 
 {% endif %}
-{% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
+{% if workplace in ['1 отдел', '3 отдел'] %}
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="hours">Часы:</label>
@@ -41,7 +44,10 @@
     <label class="label-dash" for="mens">Количество человек:</label>
     <input type="number" name="mens" id="mens" min="1" value="3" placeholder="Количество работавших людей" required>
     <input type="date" name="date" value="{{ cur_date }}" min="2023-01-01" max="{{ cur_date }}">
+    <label class="label-dash" for="optional">Дополнительно</label>
+    <input type="checkbox" name="optional" id="optional">
     <input type="submit" value="Добавить">
+
 </form>
 </div>
 {% endif %}
@@ -67,7 +73,7 @@
 
     <!--    Таблица для 1 и 3 отделов-->
 
-    {% if workplace[0][0] in ['1 отдел', '3 отдел'] %}
+    {% if workplace in ['1 отдел', '3 отдел'] %}
     <tr>
         <th>Дата</th>
         <th>Часы</th>
@@ -98,7 +104,7 @@
     {% endif %}
 
 <!--    Таблица для упаковки-->
-    {% if workplace[0][0] == 'Упаковка' %}
+    {% if workplace == 'Упаковка' %}
     <tr>
         <th>Дата</th>
         <th>Часы</th>

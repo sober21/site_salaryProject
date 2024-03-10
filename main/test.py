@@ -87,8 +87,7 @@ from main.my_database import execute_read_query, execute_query, connection, get_
 
 
 if __name__ == '__main__':
-    pass
-    # result = execute_read_query(connection, f'SELECT date, hours, salary, positions, incoming_positions '
-    #                                      f'FROM salary_users WHERE email = "max@mail.ru" and date >= "2024-03-04" '
-    #                                      f'ORDER BY date ASC')
-    # print(result)
+    d = {
+        'a': 1,
+    }
+    print(tuple(d.keys())[0])

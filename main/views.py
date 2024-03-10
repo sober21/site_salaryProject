@@ -18,8 +18,9 @@ user_date = date.today()
 
 @app.route("/", methods=["POST", "GET"])
 def index():
+    ref = 'Вход'
     if 'email' in session and 'password' in session:
-        return redirect(url_for('dashboard'))
+        ref = 'Личный кабинет'
     if request.method == 'POST':
         ind_date = request.form.get('date')
         hours = request.form.get('hours')
@@ -30,19 +31,21 @@ def index():
         res = int(salary)
         return render_template('index.html',
                                title='Главная страница', date=ind_date, res=res)
-    return render_template('index.html', title='Главная страница')
+    return render_template('index.html', title='Главная страница', ref=ref)
 
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
+    ref = 'Личный кабинет'
     cur_date = current_date
     global user_date
-    action_month = None
-    action_week = None
-    workplace = execute_read_query(connection, f'SELECT workplace from users WHERE email = "{session["email"]}"')
+    workplace, *d = execute_read_query(connection,
+                                       f'SELECT workplace, username, job_title from users WHERE email = "{session["email"]}"')[0]
+
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
-        form = list(request.form.to_dict().keys())[0]
+        form = tuple(request.form.keys())[0]
+
         action_week = '+' if 'next_week' in form else ('-' if 'last_week' in form else None)
         if form in ('get_week', 'next_week', 'last_week'):  # За неделю
             first_day_week = get_first_day_week(user_date)
@@ -52,6 +55,7 @@ def dashboard():
                 sal_data = convert_salary_and_date(sal_data, workplace=workplace)
                 sum_of_period = convert_salary_and_date(sum_of_period(action_week), workplace=workplace, sums=True)
             user_date = cur
+
         action_month = '+' if 'next_month' in form else ('-' if 'last_month' in form else None)
         if form in ['get_month', 'next_month', 'last_month']:  # За месяц
             sal_data, cur = get_salary_data_month(email=session['email'], cur_data=user_date)(action_month)
@@ -60,6 +64,7 @@ def dashboard():
                 sal_data = convert_salary_and_date(sal_data, workplace=workplace)
                 sum_of_period = convert_salary_and_date(sum_of_period(action_month), workplace=workplace, sums=True)
             user_date = cur
+
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
             date = request.form.get('date')
             hours = request.form.get('hours')
@@ -75,22 +80,32 @@ def dashboard():
             salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
                                        pr_hour=pr_hour, pr_pos=pr_pos, )
 
-            execute_query(connection,
-                          f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
-                          f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
-                          f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
+            if 'optional' in request.form or 'optional1' in request.form:
+                execute_query(connection,
+                              f'UPDATE salary_users '
+                              f'SET salary=salary+{salary}, hours=hours+{hours}, '
+                              f'positions=positions+{int(int(positions) / int(mens))}, '
+                              f'incoming_positions=incoming_positions+{int(int(incoming_positions) / int(mens))} '
+                              f'WHERE email = "{session["email"]}" and date="{date}"')
+
+            else:
+                execute_query(connection,
+                              f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
+                              f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
+                              f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
             date = render_date(date)
             sal_today = f'{date}: {int(salary)} руб.'
         return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, sal_data=sal_data,
                                sal_today=sal_today,
-                               sum=sum_of_period, email=session['email'], us=user_date, form=form)
+                               sum=sum_of_period, email=session['email'], us=user_date, form=form, d=d, ref=ref)
     return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, title='Добавить',
-                           email=session['email'], us=user_date)
+                           email=session['email'], us=user_date, d=d, ref=ref)
 
 
 @app.route('/login', methods=['POST', 'GET'])
 @app.route('/login')
 def login():
+    ref = 'Вход'
     msg = ''
     if 'email' in session and 'password' in session:
         return redirect(url_for('dashboard'))
@@ -109,7 +124,7 @@ def login():
         else:
             msg = 'Неправильное имя или пароль'
 
-    return render_template('login.html', title='Личный кабинет', msg=msg)
+    return render_template('login.html', title='Личный кабинет', msg=msg, ref=ref)
 
 
 @app.route('/logout')
@@ -121,6 +136,7 @@ def logout():
 
 @app.route('/register', methods=['POST', 'GET'])
 def register():
+    ref = 'Вход'
     msg = ''
     if request.method == 'POST' and all(
             [request.form['email'], request.form['password'], request.form['replay_password'],
@@ -147,10 +163,12 @@ def register():
                                               f'values ("{session["email"]}", {hour_price}, {position_price})')
                     return redirect(url_for('dashboard'))
                 else:
-                    msg = 'Пароль должен быть не менее 8 символов'
+                    msg = 'Пароль должен быть не менее 8 символов, латинские буквы, цифры, знаки, без пробелов'
             else:
                 msg = 'Пользователь с такой электронной почтой уже существует'
-    return render_template('register.html', msg=msg)
+        else:
+            msg = 'Пароли не совпадают'
+    return render_template('register.html', msg=msg, ref=ref)
 
 
 if __name__ == '__main__':
