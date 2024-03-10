@@ -80,7 +80,7 @@ def dashboard():
             salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
                                        pr_hour=pr_hour, pr_pos=pr_pos, )
 
-            if 'optional' in request.form or 'optional1' in request.form:
+            if 'optional' in request.form:
                 execute_query(connection,
                               f'UPDATE salary_users '
                               f'SET salary=salary+{salary}, hours=hours+{hours}, '

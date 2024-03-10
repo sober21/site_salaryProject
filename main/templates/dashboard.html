@@ -11,12 +11,9 @@
 <body>
 {% block content %}
 <h1>{{ d[0] }}({{ workplace }}, {{ d[1].lower() }})</h1>
-<h3>user_date = {{ us }}</h3>
-<h3>{{ opt}}</h3>
 {% if form %}
 <h3>form = {{ form }}</h3>
 {% endif %}
-{{ req }}
 {% if workplace=='Упаковка' %}
 <div class="div-for-form">
 <form class="salary" action="" method="post">
