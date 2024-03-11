@@ -231,24 +231,26 @@ if __name__ == '__main__':
     # print('-' * 50)
     # delete_table = 'DROP TABLE salary_users'
     # execute_query(connection, delete_table)
-    create = 'CREATE TABLE salary_users (email TEXT unique, date TEXT unique, ' \
-             'salary INTEGER DEFAULT 0, hours INTEGER DEFAULT 0, positions INTEGER DEFAULT 0, ' \
-             'incoming_positions INTEGER DEFAULT 0)'
+    # create = 'CREATE TABLE salary_users (email TEXT, date TEXT, ' \
+    #          'salary INTEGER DEFAULT 0, hours INTEGER DEFAULT 0, positions INTEGER DEFAULT 0, ' \
+    #          'incoming_positions INTEGER DEFAULT 0,' \
+    #          'UNIQUE (email,date))'
     # execute_query(connection, create)
     # table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
     # for i in table:
     #     print(i)
     # print('-' * 50)
     insert_table = 'INSERT INTO salary_users(email, date, salary, hours, positions, incoming_positions)' \
-                   'VALUES("s", "12",0,0,0,0)'
+                   'VALUES("a", "13",0,0,0,0)'
     execute_query(connection, insert_table)
-    insert_table = 'INSERT INTO salary_users(email, date, salary, hours, positions, incoming_positions)' \
-                   'VALUES("s", "13",0,0,0,0)'
+    insert_table = 'REPLACE INTO salary_users(email, date, salary, hours, positions, incoming_positions)' \
+                   'VALUES("c", "11",0,1,0,0)'
     execute_query(connection, insert_table)
+    us = execute_read_query(connection, 'select * from salary_users')
     # delete_table = 'DROP TABLE salary_users1'
     # execute_query(connection, delete_table)
     # unique = 'alter table salary_users add unique index (email, date)'
     # execute_query(connection, unique)
     # table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
-    # for i in us:
-    #     print(i)
+    for i in us:
+        print(i)
