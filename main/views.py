@@ -85,7 +85,7 @@ def dashboard():
                               f'INSERT INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
                               f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
                               f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))}) '
-                              f'ON CONFLICT DO UPDATE '
+                              f'ON CONFLICT(date) DO UPDATE '
                               f'SET salary=salary+{salary}, hours=hours+{hours}, '
                               f'positions=positions+{int(int(positions) / int(mens))}, '
                               f'incoming_positions=incoming_positions+{int(int(incoming_positions) / int(mens))}')

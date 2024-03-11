@@ -213,36 +213,42 @@ if __name__ == '__main__':
 
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
-    # us = execute_read_query(connection, 'select username from users')
+    # us = execute_read_query(connection, 'select email, date from salary_users where email="max@mail.ru"')
     # print(us)
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
     # data = execute_read_query(connection, 'Select * from salary_users where email="max@mail.ru" and date = "2024-03-06"')
     # print(data)
-    # execute_query(connection,
-    #               f'INSERT INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
-    #               f'VALUES("max@mail.ru", "2024-03-06", 1000, 5, '
-    #               f'{int(int(100) / int(2))}, {int(int(100) / int(2))}) '
-    #               f'ON CONFLICT DO UPDATE '
-    #               f'SET salary=salary+1000, hours=hours+5, '
-    #               f'positions=positions+{int(int(100) / int(2))}, '
-    #               f'incoming_positions=incoming_positions+{int(int(100) / int(2))}')
-    # data = execute_read_query(connection,
-    #                           'Select * from salary_users where email="max@mail.ru" and date = "2024-03-06"')
-    # print(data)
-    # execute_query(connection,
-    #               f'UPDATE salary_users '
-    #               f'SET salary=salary+1000, hours=hours+1, '
-    #               f'positions=positions+{int(int(100) / int(1))}, '
-    #               f'incoming_positions=incoming_positions+{int(int(100) / int(1))} '
-    #               f'WHERE email = "max@mail.ru" and date="2024-04-27"')
-    # id = execute_read_query(connection, 'select date from salary_users where email="max@mail.ru"')
-    # print(id)
     # for i in table:
     #     print(i)
-    # execute_query(connection, 'ALTER TABLE salary_users DROP CONSTRAIN date')
-    us = execute_read_query(connection, 'SELECT * FROM sqlite_master')
-    table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')
-    for i in us:
-        print(i)
+    # print('-'*50)
+    # rename_table = 'ALTER TABLE salary_users RENAME TO salary_users1'
+    # execute_query(connection, rename_table)
+    # table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+    # for i in table:
+    #     print(i)
+    # print('-' * 50)
+    # delete_table = 'DROP TABLE salary_users'
+    # execute_query(connection, delete_table)
+    create = 'CREATE TABLE salary_users (email TEXT unique, date TEXT unique, ' \
+             'salary INTEGER DEFAULT 0, hours INTEGER DEFAULT 0, positions INTEGER DEFAULT 0, ' \
+             'incoming_positions INTEGER DEFAULT 0)'
+    # execute_query(connection, create)
+    # table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+    # for i in table:
+    #     print(i)
+    # print('-' * 50)
+    insert_table = 'INSERT INTO salary_users(email, date, salary, hours, positions, incoming_positions)' \
+                   'VALUES("s", "12",0,0,0,0)'
+    execute_query(connection, insert_table)
+    insert_table = 'INSERT INTO salary_users(email, date, salary, hours, positions, incoming_positions)' \
+                   'VALUES("s", "13",0,0,0,0)'
+    execute_query(connection, insert_table)
+    # delete_table = 'DROP TABLE salary_users1'
+    # execute_query(connection, delete_table)
+    # unique = 'alter table salary_users add unique index (email, date)'
+    # execute_query(connection, unique)
+    # table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+    # for i in us:
+    #     print(i)
