@@ -139,7 +139,4 @@ def salary_of_one_day(h, pos, pr_hour, pr_pos, inc_pos=0, emp=1) -> int:
 
 
 if __name__ == '__main__':
-    # cur = datetime.today()
-    # cur = datetime(day=cur.day, month=cur.month, year=cur.year)
-    # last = datetime(year=2024, month=2, day=7)
     pass

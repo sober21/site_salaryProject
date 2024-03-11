@@ -172,7 +172,7 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
 # execute_query((connection, 'DELETE FROM salary_users WHERE id = 2'))
 
 # Все таблицы в базе
-# table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
 # for i in table:
 #     print(i)
 
@@ -189,10 +189,6 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
 # SELECT * FROM table_name ORDER BY datetime_column DESC;  #сортировка в порядке убывания
 
 
-# select = 'SELECT * from users WHERE name = "dimapolenov" OR email = "dima@mail.ru"'
-# users = execute_read_query(connection, select)
-# select_post_description = "SELECT amount FROM salary WHERE id = 2"
-# post_description = execute_read_query(connection, select_post_description)
 # add_column = 'ALTER TABLE salary_users ADD hours INT NOT NULL DEFAULT 0'
 # rename_column = 'ALTER TABLE salary_users RENAME COLUMN amount TO salary'
 # update_post_description = """
@@ -222,14 +218,31 @@ if __name__ == '__main__':
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
-    # data = execute_read_query(connection, 'Select * from salary_users where email="max@mail.ru" and date = "2024-02-27"')
+    # data = execute_read_query(connection, 'Select * from salary_users where email="max@mail.ru" and date = "2024-03-06"')
+    # print(data)
+    # execute_query(connection,
+    #               f'INSERT INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
+    #               f'VALUES("max@mail.ru", "2024-03-06", 1000, 5, '
+    #               f'{int(int(100) / int(2))}, {int(int(100) / int(2))}) '
+    #               f'ON CONFLICT DO UPDATE '
+    #               f'SET salary=salary+1000, hours=hours+5, '
+    #               f'positions=positions+{int(int(100) / int(2))}, '
+    #               f'incoming_positions=incoming_positions+{int(int(100) / int(2))}')
+    # data = execute_read_query(connection,
+    #                           'Select * from salary_users where email="max@mail.ru" and date = "2024-03-06"')
     # print(data)
     # execute_query(connection,
     #               f'UPDATE salary_users '
     #               f'SET salary=salary+1000, hours=hours+1, '
     #               f'positions=positions+{int(int(100) / int(1))}, '
     #               f'incoming_positions=incoming_positions+{int(int(100) / int(1))} '
-    #               f'WHERE email = "max@mail.ru" and date="2024-02-27"')
-    # data = execute_read_query(connection, 'Select * from salary_users where email="max@mail.ru" and date = "2024-02-27"')
-    # print(data)
-    pass
+    #               f'WHERE email = "max@mail.ru" and date="2024-04-27"')
+    # id = execute_read_query(connection, 'select date from salary_users where email="max@mail.ru"')
+    # print(id)
+    # for i in table:
+    #     print(i)
+    # execute_query(connection, 'ALTER TABLE salary_users DROP CONSTRAIN date')
+    us = execute_read_query(connection, 'SELECT * FROM sqlite_master')
+    table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')
+    for i in us:
+        print(i)

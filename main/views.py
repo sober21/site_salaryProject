@@ -44,7 +44,7 @@ def dashboard():
 
     if request.method == 'POST':
         sal_today, sal_data, sum_of_period = None, None, None
-        form = tuple(request.form.keys())[0]
+        form = tuple(request.form.keys())[-1]
 
         action_week = '+' if 'next_week' in form else ('-' if 'last_week' in form else None)
         if form in ('get_week', 'next_week', 'last_week'):  # За неделю
@@ -82,11 +82,13 @@ def dashboard():
 
             if 'optional' in request.form:
                 execute_query(connection,
-                              f'UPDATE salary_users '
+                              f'INSERT INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
+                              f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
+                              f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))}) '
+                              f'ON CONFLICT DO UPDATE '
                               f'SET salary=salary+{salary}, hours=hours+{hours}, '
                               f'positions=positions+{int(int(positions) / int(mens))}, '
-                              f'incoming_positions=incoming_positions+{int(int(incoming_positions) / int(mens))} '
-                              f'WHERE email = "{session["email"]}" and date="{date}"')
+                              f'incoming_positions=incoming_positions+{int(int(incoming_positions) / int(mens))}')
 
             else:
                 execute_query(connection,

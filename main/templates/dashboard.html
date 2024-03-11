@@ -10,7 +10,7 @@
 </head>
 <body>
 {% block content %}
-<h1>{{ d[0] }}({{ workplace }}, {{ d[1].lower() }})</h1>
+<h1>{{ d[0] }}({{ workplace.lower() }}, {{ d[1].lower() }})</h1>
 {% if form %}
 <h3>form = {{ form }}</h3>
 {% endif %}
@@ -22,9 +22,8 @@
     <label class="label-dash" for="upositions">Запаковано:</label>
     <input type="number" name="positions" id="upositions" min="1" placeholder="Количество запакованных позиций" required>
     <input type="date" name="date" value="{{ cur_date }}" max="{{ cur_date }}">
-    <label class="label-dash" for="optional1">Дополнительно</label>
-    <input type="checkbox" name="optional" id="optional1">
-    <input type="submit" value="Добавить">
+    <input type="submit" name="optional" value="Добавить заказ">
+    <input type="submit" value="Весь день">
 </form>
 </div>
 
@@ -41,9 +40,8 @@
     <label class="label-dash" for="mens">Количество человек:</label>
     <input type="number" name="mens" id="mens" min="1" value="3" placeholder="Количество работавших людей" required>
     <input type="date" name="date" value="{{ cur_date }}" min="2023-01-01" max="{{ cur_date }}">
-    <label class="label-dash" for="optional">Дополнительно</label>
-    <input type="checkbox" name="optional" id="optional">
-    <input type="submit" value="Добавить">
+    <input type="submit" name="optional" value="Добавить заказ">
+    <input type="submit" value="Весь день">
 
 </form>
 </div>
