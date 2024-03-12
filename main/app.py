@@ -127,14 +127,16 @@ def render_date(dt: str) -> str:
     return my_date
 
 
-def salary_of_one_day(h, pos, pr_hour, pr_pos, inc_pos=0, emp=1) -> int:
+def salary_of_one_day(workplace, h=0, pos=0, pr_hour=0, pr_pos=0, inc_pos=0, emp=1) -> int:
     # Считает зарплату за один день и возвращает число
-    if emp == 1 and inc_pos == 0:
+    if not h:
+        h = 0
+    if workplace == 'Упаковка':
         salary = int(h) * int(pr_hour) + int(pos) * float(pr_pos)
-    elif inc_pos != 0:
+    elif workplace in ('1 отдел', '3 отдел'):
         salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos) + (int(inc_pos) / int(emp)) * 7
     else:
-        salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos)
+        salary = 0
     return int(salary)
 
 

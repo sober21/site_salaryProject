@@ -21,16 +21,6 @@ def index():
     ref = 'Вход'
     if 'email' in session and 'password' in session:
         ref = 'Личный кабинет'
-    if request.method == 'POST':
-        ind_date = request.form.get('date')
-        hours = request.form.get('hours')
-        positions = request.form.get('positions')
-        mens = request.form.get('mens')
-        salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=0)
-        ind_date = render_date(ind_date)
-        res = int(salary)
-        return render_template('index.html',
-                               title='Главная страница', date=ind_date, res=res)
     return render_template('index.html', title='Главная страница', ref=ref)
 
 
@@ -69,6 +59,8 @@ def dashboard():
             date = request.form.get('date')
             hours = request.form.get('hours')
             positions = request.form.get('positions')
+            if not hours:
+                hours = 0
             if 'mens' in request.form and 'incoming_positions' in request.form:
                 mens = request.form.get('mens')
                 incoming_positions = request.form['incoming_positions']
@@ -77,7 +69,7 @@ def dashboard():
             price = execute_read_query(connection,
                                        f'SELECT hour_price, position_price FROM price WHERE email = "{session["email"]}"')
             pr_hour, pr_pos = price[0][0], price[0][1]
-            salary = salary_of_one_day(h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
+            salary = salary_of_one_day(workplace=workplace, h=hours, pos=positions, emp=mens, inc_pos=incoming_positions,
                                        pr_hour=pr_hour, pr_pos=pr_pos, )
 
             if 'optional' in request.form:

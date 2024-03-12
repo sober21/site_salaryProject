@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta
 
 from app import (is_valid_password, is_valid_username, is_valid_email, valid_register_data, get_position_price,
-                 get_hour_price, current_date)
-from main.my_database import execute_read_query, execute_query, connection, get_salary_data_month, get_salary_data_week, \
-    get_sum_of_week, get_first_day_week
+                 get_hour_price, current_date, salary_of_one_day)
+# from main.my_database import execute_read_query, execute_query, connection, get_salary_data_month, get_salary_data_week, \
+#     get_sum_of_week, get_first_day_week
 
 # Тесты на правильность имени пользователя
 # assert (is_valid_username('sdfa adsf')) == False
@@ -85,9 +85,24 @@ from main.my_database import execute_read_query, execute_query, connection, get_
 # assert get_position_price('3 отдел') == 4.7
 # assert get_position_price('Упаковка') == 3
 
+# Функция расчёта зарплаты за один день
+def test_func_salary_of_the_day():
+    assert salary_of_one_day(workplace='Упаковка', h=9,pos=100, pr_hour=89, pr_pos=3) == 1101
+    assert salary_of_one_day(workplace='Упаковка', pos=100, pr_hour=89, pr_pos=3) == 300
+    assert salary_of_one_day(workplace='Упаковка', h=9, pr_hour=100) == 900
+    assert salary_of_one_day(workplace='Упаковка', h=9, pr_hour=100, inc_pos=100) == 900
+    assert salary_of_one_day(workplace='3 отдел', h=9, pr_hour=100, inc_pos=100) == 1600
+    assert salary_of_one_day(workplace='3 отдел', h='', inc_pos=100) == 700
+    assert salary_of_one_day(workplace='3 отдел', h=9, pr_hour=100, inc_pos=100) == 1600
+    assert salary_of_one_day(workplace='1 отдел', h=9, pr_hour=100, inc_pos=100) == 1600
+    assert salary_of_one_day(workplace='Упаковка') == 0
+    assert salary_of_one_day(workplace='1 отдел') == 0
+    assert salary_of_one_day(workplace='3 отдел') == 0
+    assert salary_of_one_day(workplace='Упаковка', pr_hour=89, pr_pos=3) == 0
+    assert salary_of_one_day(workplace='1 отдел', pr_hour=89, pr_pos=3) == 0
+    assert salary_of_one_day(workplace='3 отдел', pr_hour=89, pr_pos=3) == 0
+    assert salary_of_one_day(workplace='3 отsdfaдел') == 0
+
 
 if __name__ == '__main__':
-    d = {
-        'a': 1,
-    }
-    print(tuple(d.keys())[0])
+    test_func_salary_of_the_day()

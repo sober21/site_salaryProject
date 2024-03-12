@@ -1,34 +1,13 @@
 {% extends 'base.html' %}
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Посчитать и добавить</title>
-
+    <title>Title</title>
 </head>
 <body>
 {% block content %}
-<h1>{{ d[0] }}({{ workplace.lower() }}, {{ d[1].lower() }})</h1>
-{% if form %}
-<h3>form = {{ form }}</h3>
-{% endif %}
-{% if workplace=='Упаковка' %}
-<div class="div-for-form">
-<form class="salary" action="" method="post">
-    <label class="label-dash" for="uhours">Часы:</label>
-    <input type="number" id="uhours" name="hours" min="0" max="12" placeholder="Количество отработанных часов" >
-    <label class="label-dash" for="upositions">Запаковано:</label>
-    <input type="number" name="positions" id="upositions" min="0" placeholder="Количество запакованных позиций" required>
-    <input type="date" name="date" value="{{ cur_date }}" max="{{ cur_date }}">
-    <input type="submit" name="optional" value="Добавить заказ">
-    <input type="submit" value="Весь день">
-</form>
-</div>
-
-{% endif %}
-{% if workplace in ['1 отдел', '3 отдел'] %}
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="hours">Часы:</label>
@@ -45,7 +24,6 @@
 
 </form>
 </div>
-{% endif %}
 <div>
 <table>
 <tr>
@@ -67,8 +45,6 @@
     {% if sal_data %}
 
     <!--    Таблица для 1 и 3 отделов-->
-
-    {% if workplace in ['1 отдел', '3 отдел'] %}
     <tr>
         <th>Дата</th>
         <th>Часы</th>
@@ -95,36 +71,6 @@
         <th>{{ i[3] }}</th>
         {% endfor %}
     </tr>
-
-    {% endif %}
-
-<!--    Таблица для упаковки-->
-    {% if workplace == 'Упаковка' %}
-    <tr>
-        <th>Дата</th>
-        <th>Часы</th>
-        <th>Упаковано</th>
-        <th>Сумма</th>
-    </tr>
-    {% for i in sal_data %}
-    <tr>
-        <td>{{ i[0] }}</td>
-        <td>{{ i[1] }}</td>
-        <td>{{ i[2] }}</td>
-        <td>{{ i[3] }}</td>
-    </tr>
-
-    {% endfor %}
-    <tr>
-        <th>Всего</th>
-        {% for i in sum %}
-        <th>{{ i[0] }}</th>
-        <th>{{ i[1] }}</th>
-        <th>{{ i[2] }}</th>
-        {% endfor %}
-    </tr>
-
-    {% endif %}
     {% endif %}
 </table>
 </div>

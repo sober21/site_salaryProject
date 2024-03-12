@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% block content %}
+<div class="div-for-form">
+<form class="salary" action="" method="post">
+    <label class="label-dash" for="uhours">Часы:</label>
+    <input type="number" id="uhours" name="hours" min="0" max="12" placeholder="Количество отработанных часов" >
+    <label class="label-dash" for="upositions">Запаковано:</label>
+    <input type="number" name="positions" id="upositions" min="0" placeholder="Количество запакованных позиций" required>
+    <input type="date" name="date" value="{{ cur_date }}" max="{{ cur_date }}">
+    <input type="submit" name="optional" value="Добавить заказ">
+    <input type="submit" value="Весь день">
+</form>
+</div>
+
+<div>
+<table>
+<tr>
+<td><form method="post">
+    <input type="submit" name="last_week" value="<<">
+    <input type="submit" name="get_week" value="Эта неделя">
+    <input type="submit" name="next_week" value=">>">
+</form></td>
+<td><form method="post">
+    <input type="submit" name="last_month" value="<<">
+    <input type="submit" name="get_month" value="Этот месяц">
+    <input type="submit" name="next_month" value=">>">
+</form></td>
+</tr>
+</table>
+</div>
+<div>
+<table>
+    {% if sal_data %}
+    <tr>
+        <th>Дата</th>
+        <th>Часы</th>
+        <th>Упаковано</th>
+        <th>Сумма</th>
+    </tr>
+    {% for i in sal_data %}
+    <tr>
+        <td>{{ i[0] }}</td>
+        <td>{{ i[1] }}</td>
+        <td>{{ i[2] }}</td>
+        <td>{{ i[3] }}</td>
+    </tr>
+
+    {% endfor %}
+    <tr>
+        <th>Всего</th>
+        {% for i in sum %}
+        <th>{{ i[0] }}</th>
+        <th>{{ i[1] }}</th>
+        <th>{{ i[2] }}</th>
+        {% endfor %}
+    </tr>
+    {% endif %}
+</table>
+</div>
+{% if sal_today %}
+{{sal_today}}
+{% endif %}
+{% endblock content %}
+</body>
+</html>
