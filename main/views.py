@@ -56,7 +56,7 @@ def dashboard():
             user_date = cur
 
         elif 'date' in request.form and 'hours' in request.form and 'positions' in request.form:
-            date = request.form.get('date')
+            my_date = request.form.get('date')
             hours = request.form.get('hours')
             positions = request.form.get('positions')
             if not hours:
@@ -66,6 +66,9 @@ def dashboard():
                 incoming_positions = request.form['incoming_positions']
             else:
                 mens, incoming_positions = 1, 0
+            order_name = request.form['order_name'] if 'order_name' in request.form else None
+            if not order_name:
+                order_name = 'Без названия'
             price = execute_read_query(connection,
                                        f'SELECT hour_price, position_price FROM price WHERE email = "{session["email"]}"')
             pr_hour, pr_pos = price[0][0], price[0][1]
@@ -74,21 +77,21 @@ def dashboard():
 
             if 'optional' in request.form:
                 execute_query(connection,
-                              f'INSERT INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
-                              f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
-                              f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))}) '
+                              f'INSERT INTO salary_users (email, date, salary, hours, positions, incoming_positions, order_name) '
+                              f'VALUES("{session["email"]}", "{my_date}", {salary}, {hours}, '
+                              f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))}, "{order_name}") '
                               f'ON CONFLICT(email, date) DO UPDATE '
                               f'SET salary=salary+{salary}, hours=hours+{hours}, '
                               f'positions=positions+{int(int(positions) / int(mens))}, '
-                              f'incoming_positions=incoming_positions+{int(int(incoming_positions) / int(mens))}')
+                              f'incoming_positions=incoming_positions+{int(int(incoming_positions) / int(mens))}, "{order_name}"')
 
             else:
                 execute_query(connection,
-                              f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions) '
-                              f'VALUES("{session["email"]}", "{date}", {salary}, {hours}, '
-                              f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
-            date = render_date(date)
-            sal_today = f'{date}: {int(salary)} руб.'
+                              f'REPLACE INTO salary_users (email, date, salary, hours, positions, incoming_positions, order_name) '
+                              f'VALUES("{session["email"]}", "{my_date}", {salary}, {hours}, '
+                              f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))}), "{order_name}"')
+            my_date = render_date(my_date)
+            sal_today = f'{my_date}: {int(salary)} руб.'
         return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, sal_data=sal_data,
                                sal_today=sal_today,
                                sum=sum_of_period, email=session['email'], us=user_date, form=form, d=d, ref=ref)

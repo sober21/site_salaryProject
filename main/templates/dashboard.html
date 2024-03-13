@@ -19,6 +19,8 @@
 <form class="salary" action="" method="post">
     <label class="label-dash" for="uhours">Часы:</label>
     <input type="number" id="uhours" name="hours" min="0" max="12" placeholder="Количество отработанных часов" >
+    <label class="label-dash" for="order_name">Заказ:</label>
+    <input type="number" name="order_name" id="order_name" min="0" placeholder="Название заказа">
     <label class="label-dash" for="upositions">Запаковано:</label>
     <input type="number" name="positions" id="upositions" min="0" placeholder="Количество запакованных позиций" required>
     <input type="date" name="date" value="{{ cur_date }}" max="{{ cur_date }}">

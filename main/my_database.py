@@ -172,7 +172,7 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
 # execute_query((connection, 'DELETE FROM salary_users WHERE id = 2'))
 
 # Все таблицы в базе
-# table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
 # for i in table:
 #     print(i)
 
@@ -189,7 +189,7 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
 # SELECT * FROM table_name ORDER BY datetime_column DESC;  #сортировка в порядке убывания
 
 
-# add_column = 'ALTER TABLE salary_users ADD hours INT NOT NULL DEFAULT 0'
+# add_column = 'ALTER TABLE salary_users ADD order_name TEXT DEFAULT "---"'
 # rename_column = 'ALTER TABLE salary_users RENAME COLUMN amount TO salary'
 # update_post_description = """
 # UPDATE
@@ -213,12 +213,12 @@ if __name__ == '__main__':
 
     # print(u)
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
-    # us = execute_read_query(connection, 'select email, date from salary_users where email="max@mail.ru"')
+    # us = execute_read_query(connection, 'select email from users')
     # print(us)
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
-    # for i in table:
+    # for i in us:
     #     print(i)
 
     pass
