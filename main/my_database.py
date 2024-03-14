@@ -2,6 +2,7 @@ import calendar
 from datetime import datetime, date, timedelta
 import sqlite3
 from sqlite3 import Error
+import random
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -34,7 +35,7 @@ def create_connection(db_dir):
     return connection
 
 
-with open('db_path.txt') as path:
+with open(r'main/db_path.txt') as path:
     path = path.read()
 connection = create_connection(fr'{path}')
 
@@ -77,6 +78,25 @@ def get_salary_data_week(email: str, first_day: datetime, connect=connection):
                                                  f'FROM salary_users WHERE email = "{email}" and "{last_day}" > date and date >= "{first_day}" '
                                                  f'ORDER BY date ASC')
             return result, first_day
+
+        return wrapper()
+
+    return action
+
+
+def get_order_data_day(email: str, current_day: datetime, connect=connection):
+    def action(act=None):
+        nonlocal current_day
+
+        if act == '+':
+            current_day = current_day + timedelta(days=1)
+        elif act == '-':
+            current_day = current_day - timedelta(days=1)
+        def wrapper():
+            result = execute_read_query(connect, f'SELECT date, positions, order_name '
+                                                 f'FROM packer_orders_data WHERE email = "{email}" and date = "{current_day}" '
+                                                 f'ORDER BY id ASC')
+            return result, current_day
 
         return wrapper()
 
@@ -166,15 +186,14 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
 # execute_query(connection, 'DROP TABLE salary_users')
 
 # Удаление всех данных из таблицы
-# execute_query(connection, 'DELETE FROM salary_users')
+# execute_query(connection, 'DELETE FROM packer_orders_data')
 
 # Удаление 1 записи из таблицы
 # execute_query((connection, 'DELETE FROM salary_users WHERE id = 2'))
 
 # Все таблицы в базе
-table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
-# for i in table:
-#     print(i)
+# table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+
 
 # Все данные в таблице
 # salary_users = execute_read_query(connection, 'SELECT * FROM salary_users')
@@ -212,13 +231,38 @@ if __name__ == '__main__':
     #                           'positions INTEGER DEFAULT 0, incoming_positions INTEGER DEFAULT 0, UNIQUE(email, date))')
 
     # print(u)
+
+    # execute_query(connection, 'CREATE TABLE packer_orders_data (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT,'
+    #                           'date TEXT, positions INTEGER, order_name TEXT)')
+
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
-    # us = execute_read_query(connection, 'select email from users')
+
+    # us = execute_read_query(connection, 'select * from packer_orders_data where email="dima@mail.ru" ORDER BY date')
     # print(us)
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
+    # execute_query(connection, 'DELETE FROM packer_orders_data')
+    # for i in range(30):
+    #     pos = random.randint(1, 100)
+    #     dt = random.randint(1, 30)
+    #     em = random.choice(['max@mail.ru', 'dima@mail.ru', 'sasha@mail.ru'])
+    #     o_name = random.choice(['рем', 'energy', 'dvurech', 'moscow'])
+    #     execute_query(connection, f'INSERT INTO packer_orders_data(email, positions, order_name, date) '
+    #                               f'VALUES("{em}" ,{pos}, "{o_name}", "2024-03-{dt}")')
+
+
+
     # for i in us:
     #     print(i)
-
-    pass
+    # for i in table:
+    #     print(i)
+    d = get_order_data_day("dima@mail.ru", datetime.today().date())
+    print(d('+'))
+    print(d('+'))
+    print(d('+'))
+    print(d('+'))
+    print(d('+'))
+    print(d('+'))
+    print(d('+'))
+    print(d('+'))
