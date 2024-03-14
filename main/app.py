@@ -118,12 +118,22 @@ def change_month_name(month):
     return month
 
 
-def render_date(dt: str) -> str:
+def render_date(dt: str | datetime|date) -> str:
     # Преобразует дату в нужный формат. Из '2022-02-12' получается '12 февраля'
-    my_date = datetime.strptime(dt, '%Y-%m-%d')
-    my_date = my_date.strftime('%d %B')
-    day, month = my_date.split()[0], change_month_name(my_date.split()[-1])
-    my_date = f'{int(day)} {month}'
+    if isinstance(dt, str):
+        try:
+            my_date = datetime.strptime(dt, '%Y-%m-%d')
+            my_date = my_date.strftime('%d %B')
+            day, month = my_date.split()[0], change_month_name(my_date.split()[-1])
+            my_date = f'{int(day)} {month}'
+        except ValueError:
+            raise ValueError('Дата должна быть в формате гггг-мм-дд')
+    elif isinstance(dt, datetime) or isinstance(dt, date):
+        my_date = dt.strftime('%d %B')
+        day, month = my_date.split()[0], change_month_name(my_date.split()[-1])
+        my_date = f'{int(day)} {month}'
+    else:
+        my_date = 'Неправильный формат даты. Нужен str, datetime или date'
     return my_date
 
 

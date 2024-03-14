@@ -35,7 +35,7 @@ def create_connection(db_dir):
     return connection
 
 
-with open(r'main/db_path.txt') as path:
+with open(r'db_path.txt') as path:
     path = path.read()
 connection = create_connection(fr'{path}')
 
@@ -192,7 +192,7 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
 # execute_query((connection, 'DELETE FROM salary_users WHERE id = 2'))
 
 # Все таблицы в базе
-# table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
+table = execute_read_query(connection, 'SELECT * FROM sqlite_master where type="table"')  # все таблицы
 
 
 # Все данные в таблице
@@ -237,7 +237,7 @@ if __name__ == '__main__':
 
     # execute_query(connection, 'ALTER TABLE salary_users ADD incoming_positions INTEGER DEFAULT 0')
 
-    # us = execute_read_query(connection, 'select * from packer_orders_data where email="dima@mail.ru" ORDER BY date')
+    us = execute_read_query(connection, 'select * from packer_orders_data where email="dima@mail.ru" ORDER BY date')
     # print(us)
     # sal_data = execute_read_query(connection,
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
@@ -253,16 +253,9 @@ if __name__ == '__main__':
 
 
 
-    # for i in us:
-    #     print(i)
+    for i in us:
+        print(i)
     # for i in table:
     #     print(i)
-    d = get_order_data_day("dima@mail.ru", datetime.today().date())
-    print(d('+'))
-    print(d('+'))
-    print(d('+'))
-    print(d('+'))
-    print(d('+'))
-    print(d('+'))
-    print(d('+'))
-    print(d('+'))
+
+

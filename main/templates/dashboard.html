@@ -14,13 +14,14 @@
 {% if form %}
 <h3>form = {{ form }}</h3>
 {% endif %}
+{{us}}
 {% if workplace=='Упаковка' %}
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="uhours">Часы:</label>
     <input type="number" id="uhours" name="hours" min="0" max="12" placeholder="Количество отработанных часов" >
     <label class="label-dash" for="order_name">Заказ:</label>
-    <input type="number" name="order_name" id="order_name" min="0" placeholder="Название заказа">
+    <input type="text" name="order_name" id="order_name" placeholder="Название заказа">
     <label class="label-dash" for="upositions">Запаковано:</label>
     <input type="number" name="positions" id="upositions" min="0" placeholder="Количество запакованных позиций" required>
     <input type="date" name="date" value="{{ cur_date }}" max="{{ cur_date }}">
@@ -51,6 +52,13 @@
 <div>
 <table>
 <tr>
+{% if workplace == 'Упаковка' %}
+<td><form method="post">
+    <input type="submit" name="last_day" value="<<">
+    <input type="submit" name="get_day" value="{{ us }}">
+    <input type="submit" name="next_day" value=">>">
+</form></td>
+{% endif %}
 <td><form method="post">
     <input type="submit" name="last_week" value="<<">
     <input type="submit" name="get_week" value="Эта неделя">
@@ -129,6 +137,22 @@
     {% endif %}
     {% endif %}
 </table>
+{% if workplace=='Упаковка' %}
+    {% if orders %}
+    <table>
+        <tr>
+            <th>Заказ</th>
+            <th>Позиции</th>
+        </tr>
+        {% for order in orders %}
+        <tr>
+            <td>{{ order[2] }}</td>
+            <td>{{ order[1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+{% endif %}
 </div>
 {% if sal_today %}
 {{sal_today}}
