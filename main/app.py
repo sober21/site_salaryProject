@@ -1,3 +1,4 @@
+import doctest
 from datetime import datetime, date
 import locale
 from string import ascii_lowercase, ascii_uppercase
@@ -118,8 +119,21 @@ def change_month_name(month):
     return month
 
 
-def render_date(dt: str | datetime|date) -> str:
-    # Преобразует дату в нужный формат. Из '2022-02-12' получается '12 февраля'
+def render_date(dt: str | datetime | date) -> str:
+    """
+    Преобразует входящую дату и возвращает результат
+    :param dt: строка, или datetime, или date(дата)
+    :return: результат преобразования
+
+    >>> render_date('2024-03-14')
+    '14 Марта'
+    >>> render_date(datetime(year=2024, month=3, day=14))
+    '14 Марта'
+    >>> render_date(date(year=2024, month=3, day=14))
+    '14 Марта'
+
+
+    """
     if isinstance(dt, str):
         try:
             my_date = datetime.strptime(dt, '%Y-%m-%d')
@@ -137,18 +151,33 @@ def render_date(dt: str | datetime|date) -> str:
     return my_date
 
 
-def salary_of_one_day(workplace, h=0, pos=0, pr_hour=0, pr_pos=0, inc_pos=0, emp=1) -> int:
-    # Считает зарплату за один день и возвращает число
-    if not h:
-        h = 0
-    if workplace == 'Упаковка':
-        salary = int(h) * int(pr_hour) + int(pos) * float(pr_pos)
-    elif workplace in ('1 отдел', '3 отдел'):
-        salary = int(h) * int(pr_hour) + (int(pos) / int(emp)) * float(pr_pos) + (int(inc_pos) / int(emp)) * 7
-    else:
-        salary = 0
+def salary_of_one_day(workplace: str, h=0, pos=0, inc_pos=0, emp: int = 1) -> int:
+    """
+    Производит вычисления и возвращает результат(зарплата за 1 рабочий день)
+    :param workplace: рабочее место
+    :param h: количество часов
+    :param pos: количество позиций
+    :param inc_pos: количество принятых позиций
+    :param emp: количество человек
+    :return: результат вычислений
+
+    >>> salary_of_one_day('Упаковка', pos=100, h=10)
+    1190
+
+    """
+    try:
+        if workplace == 'Упаковка':
+            salary = int(h) * 89 + int(pos) * 3
+        elif workplace in '1 отдел':
+            salary = int(h) * 91 + (int(pos) / int(emp)) * 3.7 + (int(inc_pos) / int(emp)) * 7
+        elif workplace in '3 отдел':
+            salary = int(h) * 91 + (int(pos) / int(emp)) * 4.7 + (int(inc_pos) / int(emp)) * 7
+        else:
+            salary = 2
+    except (ValueError, TypeError):
+        raise TypeError('Дожно быть число, а не пустая строка')
     return int(salary)
 
 
 if __name__ == '__main__':
-    pass
+    doctest.testmod()

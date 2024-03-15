@@ -35,7 +35,7 @@ def dashboard():
         0]
 
     if request.method == 'POST':
-        sal_today, sal_data, sum_of_period, orders_data = None, None, None, None
+        sal_today, sal_data, sum_of_period, orders_data, hours = None, None, None, None, None
         form = tuple(request.form.keys())[-1]
         action_orders = '+' if 'next_day' in form else ('-' if 'last_day' in form else None)
         if form in ('next_day', 'get_day', 'last_day'):
@@ -79,8 +79,7 @@ def dashboard():
                                        f'SELECT hour_price, position_price FROM price WHERE email = "{session["email"]}"')
             pr_hour, pr_pos = price[0][0], price[0][1]
             salary = salary_of_one_day(workplace=workplace, h=hours, pos=positions, emp=mens,
-                                       inc_pos=incoming_positions,
-                                       pr_hour=pr_hour, pr_pos=pr_pos, )
+                                       inc_pos=incoming_positions)
 
             if 'optional' in request.form:
                 execute_query(connection,
@@ -101,11 +100,12 @@ def dashboard():
                               f'VALUES("{session["email"]}", "{my_date}", {salary}, {hours}, '
                               f'{int(int(positions) / int(mens))}, {int(int(incoming_positions) / int(mens))})')
             my_date = render_date(my_date)
-            user_date = render_date(user_date)
+
             sal_today = f'{my_date}: {int(salary)} руб.'
+        user_render_date = render_date(user_date)
         return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, sal_data=sal_data,
-                               sal_today=sal_today, sum=sum_of_period, email=session['email'], us=user_date, form=form,
-                               d=d, ref=ref, orders=orders_data)
+                               sal_today=sal_today, sum=sum_of_period, email=session['email'], us=user_render_date, form=form,
+                               d=d, ref=ref, orders=orders_data, ho=hours)
     return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, title='Добавить',
                            email=session['email'], us=user_date, d=d, ref=ref)
 
