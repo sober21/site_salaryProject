@@ -25,11 +25,19 @@ def index():
     return render_template('index.html', title='Главная страница', ref=ref)
 
 
+@app.route('/dash2')
+def dash2():
+    return render_template('dash2.html')
+
+
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():
     ref = 'Личный кабинет'
     cur_date = current_date
     global user_date
+    user_render_date = render_date(user_date)
+    user_month = user_date.strftime('%B')
+    user_year = user_date.strftime('%Y')
     workplace, *d = execute_read_query(connection,
                                        f'SELECT workplace, username, job_title from users WHERE email = "{session["email"]}"')[
         0]
@@ -75,9 +83,6 @@ def dashboard():
             order_name = request.form['order_name'] if 'order_name' in request.form else None
             if not order_name:
                 order_name = 'Без названия'
-            price = execute_read_query(connection,
-                                       f'SELECT hour_price, position_price FROM price WHERE email = "{session["email"]}"')
-            pr_hour, pr_pos = price[0][0], price[0][1]
             salary = salary_of_one_day(workplace=workplace, h=hours, pos=positions, emp=mens,
                                        inc_pos=incoming_positions)
 
@@ -103,11 +108,14 @@ def dashboard():
 
             sal_today = f'{my_date}: {int(salary)} руб.'
         user_render_date = render_date(user_date)
+        user_year = user_date.strftime('%Y')
+        user_month = user_date.strftime('%B')
         return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, sal_data=sal_data,
-                               sal_today=sal_today, sum=sum_of_period, email=session['email'], us=user_render_date, form=form,
-                               d=d, ref=ref, orders=orders_data, ho=hours)
+                               sal_today=sal_today, sum=sum_of_period, email=session['email'], us=user_render_date,
+                               form=form,
+                               d=d, ref=ref, orders=orders_data, ho=hours, month=user_month, year=user_year)
     return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, title='Добавить',
-                           email=session['email'], us=user_date, d=d, ref=ref)
+                           email=session['email'], us=user_render_date, d=d, ref=ref, month=user_month, year=user_year)
 
 
 @app.route('/login', methods=['POST', 'GET'])

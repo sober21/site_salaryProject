@@ -4,18 +4,17 @@ html,body {
   place-items: center;
   background: #87CEEB;
   display: grid;
+  margin: 2px;
 }
 
 footer {
-    height: 100%;
+    height: auto;
     width: 100%;
     text-align: center;
     background-color: black;
+    margin-top: auto;
 }
 
-div {
-    margin: 15px;
-}
 
 label {
     color: #ff9900;
@@ -72,14 +71,14 @@ caption {
 
 .salary {
     display: grid;
-    width: 200px;
+    width: 300px;
     border: 1px solid red;
 
 }
 
 .div-for-form {
     background-color: black;
-    widht: 300px;
+    width: 300px;
     height: 100%;
     border: solid #ff9900;
     display: flex;
@@ -97,5 +96,7 @@ caption {
 }
 
 .navbar {
+    height: auto;
     width: 100%;
+    margin-bottom: auto;
 }

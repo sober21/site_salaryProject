@@ -73,13 +73,13 @@ def get_salary_data_week(email: str, first_day: datetime, connect=connection):
             first_day = first_day - timedelta(weeks=1)
         last_day = first_day + timedelta(weeks=1)
 
-        def wrapper():
+        def inner():
             result = execute_read_query(connect, f'SELECT date, hours, salary, positions, incoming_positions '
                                                  f'FROM salary_users WHERE email = "{email}" and "{last_day}" > date and date >= "{first_day}" '
                                                  f'ORDER BY date ASC')
             return result, first_day
 
-        return wrapper()
+        return inner()
 
     return action
 
@@ -92,13 +92,13 @@ def get_order_data_day(email: str, current_day: datetime, connect=connection):
             current_day = current_day + timedelta(days=1)
         elif act == '-':
             current_day = current_day - timedelta(days=1)
-        def wrapper():
+        def inner():
             result = execute_read_query(connect, f'SELECT date, positions, order_name '
                                                  f'FROM packer_orders_data WHERE email = "{email}" and date = "{current_day}" '
                                                  f'ORDER BY id ASC')
             return result, current_day
 
-        return wrapper()
+        return inner()
 
     return action
 
@@ -112,13 +112,13 @@ def get_sum_of_week(email: str, first_day, connect=connection):
             first_day = first_day - timedelta(weeks=1)
         last_day = first_day + timedelta(weeks=1)
 
-        def wrapper():
+        def inner():
             result = execute_read_query(connect,
                                         f'SELECT SUM(salary), SUM(hours), SUM(positions), SUM(incoming_positions) '
                                         f'FROM salary_users WHERE email= "{email}" and "{last_day}" > date and date >= "{first_day}"')
             return result
 
-        return wrapper()
+        return inner()
 
     return action
 
@@ -131,14 +131,14 @@ def get_sum_of_month(email: str, cur_data: datetime, connect=connection):
         elif act == '-':
             cur_data = cur_data - timedelta(days=calendar.monthrange(year=cur_data.year, month=cur_data.month)[1])
 
-        def wrapper():
+        def inner():
             result = execute_read_query(connect,
                                         f'SELECT SUM(salary),SUM(hours), SUM(positions), SUM(incoming_positions) '
                                         f'FROM salary_users WHERE email = "{email}" '
                                         f'and strftime("%Y%m", date) == strftime("%Y%m", "{cur_data}")')
             return result
 
-        return wrapper()
+        return inner()
 
     return action
 
@@ -151,7 +151,7 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
         elif act == '-':
             cur_data = cur_data - timedelta(days=calendar.monthrange(year=cur_data.year, month=cur_data.month)[1])
 
-        def wrapper():
+        def inner():
             result = execute_read_query(connect,
                                         f'SELECT date, hours, salary, positions, incoming_positions FROM salary_users '
                                         f'WHERE email = "{email}" and '
@@ -159,7 +159,7 @@ def get_salary_data_month(email: str, cur_data: date, connect=connection):
                                         f'ORDER BY date ASC')
             return result, cur_data
 
-        return wrapper()
+        return inner()
 
     return action
 
@@ -253,8 +253,7 @@ if __name__ == '__main__':
 
 
 
-    for i in us:
-        print(i)
+    print(us)
     # for i in table:
     #     print(i)
 

@@ -17,7 +17,7 @@ def get_username(acc):
 
 
 def get_hour_price(job_title: str) -> int:
-    # Возращает стоимость часа в зависимости от должности
+    # Возвращает стоимость часа в зависимости от должности
     result = 89
     if job_title == 'Кладовщик':
         result = 91
@@ -27,7 +27,7 @@ def get_hour_price(job_title: str) -> int:
 
 
 def get_position_price(workplace: str) -> int | float:
-    # Возращает стоимость позиции в зависимости от должности
+    # Возвращает стоимость позиции в зависимости от должности
     result = 3.7
     if workplace == '3 отдел':
         result = 4.7
@@ -90,8 +90,12 @@ def get_email(acc):
     return res
 
 
-def convert_salary_and_date(array, workplace, sums=False):
-    # Поочерёдно возвращает форматированную дату, часы, позиции, приход и форматированную зарплату
+def convert_salary_and_date(array: list, workplace, sums=False):
+    """
+    Поочерёдно возвращает форматированную дату часы позиции приход и форматированную зарплату.
+    :array: список кортежей из базы данных.
+    :workplace: место работы(str)
+    """
     if array:
         if workplace in ['1 отдел', '3 отдел']:
             if sums:
@@ -111,7 +115,14 @@ def convert_salary_and_date(array, workplace, sums=False):
         yield 0, 0, 0, 0
 
 
-def change_month_name(month):
+def change_month_name(month: str) -> str:
+    """
+    Преобразует название месяца в родительный падеж и возвращает результат.
+    :param month: Название месяца в именительном падеже.
+    :return: результат преобразования
+    >>> change_month_name('январь')
+    'января'
+    """
     if month[-1] == 'т':
         month = month + 'а'
     else:
@@ -163,6 +174,10 @@ def salary_of_one_day(workplace: str, h=0, pos=0, inc_pos=0, emp: int = 1) -> in
 
     >>> salary_of_one_day('Упаковка', pos=100, h=10)
     1190
+    >>> salary_of_one_day('1 отдел', pos=100, h=10)
+    1280
+    >>> salary_of_one_day('3 отдел', pos=100, h=10)
+    1380
 
     """
     try:
@@ -175,7 +190,7 @@ def salary_of_one_day(workplace: str, h=0, pos=0, inc_pos=0, emp: int = 1) -> in
         else:
             salary = 2
     except (ValueError, TypeError):
-        raise TypeError('Дожно быть число, а не пустая строка')
+        raise TypeError('Должно быть число, а не пустая строка')
     return int(salary)
 
 

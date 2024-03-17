@@ -10,13 +10,14 @@
 </head>
 <body>
 {% block content %}
-<h1>{{ d[0] }}({{ workplace.lower() }}, {{ d[1].lower() }})</h1>
-{% if form %}
-<h3>form = {{ form }}</h3>
-{% endif %}
-{{ us }}
-{{ ho }}
+
+<!--<div><h1>{{ d[0] }}({{ workplace.lower() }}, {{ d[1].lower() }})</h1></div>-->
+<!--{% if form %}-->
+<!--<h3>form = {{ form }}</h3>-->
+<!--{% endif %}-->
+<!--{{ us }}-->
 {% if workplace=='Упаковка' %}
+<div style="width: 500px;color:red">
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="uhours">Часы:</label>
@@ -29,10 +30,11 @@
     <input type="submit" name="optional" value="Добавить заказ">
     <input type="submit" value="Весь день">
 </form>
-</div>
+</div></div>
 
 {% endif %}
 {% if workplace in ['1 отдел', '3 отдел'] %}
+<div>
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="hours">Часы:</label>
@@ -48,9 +50,10 @@
     <input type="submit" value="Весь день">
 
 </form>
-</div>
+</div></div>
 {% endif %}
 <div>
+<h3 style="text-align: center">{{ year }} год</h3>
 <table>
 <tr>
 {% if workplace == 'Упаковка' %}
@@ -67,7 +70,7 @@
 </form></td>
 <td><form method="post">
     <input type="submit" name="last_month" value="<<">
-    <input type="submit" name="get_month" value="Этот месяц">
+    <input type="submit" name="get_month" value="{{ month }}">
     <input type="submit" name="next_month" value=">>">
 </form></td>
 </tr>

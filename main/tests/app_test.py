@@ -26,12 +26,12 @@ class SalaryOfOneDayTest(TestCase):
     def test_packer_empty_hour(self):
         with self.assertRaises(TypeError) as e:
             app.salary_of_one_day('Упаковка', pos='100', h='', inc_pos=100)
-        self.assertEqual('Дожно быть число, а не пустая строка', e.exception.args[0])
+        self.assertEqual('Должно быть число, а не пустая строка', e.exception.args[0])
 
     def test_packer_empty_pos(self):
         with self.assertRaises(TypeError) as e:
             app.salary_of_one_day('Упаковка', pos='', h=10, inc_pos=100)
-        self.assertEqual('Дожно быть число, а не пустая строка', e.exception.args[0])
+        self.assertEqual('Должно быть число, а не пустая строка', e.exception.args[0])
 
 
 class RenderDateTest(TestCase):
