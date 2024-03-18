@@ -29,6 +29,10 @@ def index():
 def dash2():
     return render_template('dash2.html')
 
+@app.route('/example_js')
+def example_js():
+    return render_template('example_js.html')
+
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():

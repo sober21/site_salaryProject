@@ -78,13 +78,14 @@ caption {
 
 .div-for-form {
     background-color: black;
-    width: 300px;
-    height: 100%;
+    width: auto;
+    height: auto;
     border: solid #ff9900;
     display: flex;
     align-items: center;
     justify-content: center;
     padding:10px;
+    margin-top: 20px;
 }
 
 
