@@ -101,3 +101,7 @@ caption {
     width: 100%;
     margin-bottom: auto;
 }
+
+.box {
+    border: 2px solid rgb(200,200,200);
+}

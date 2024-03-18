@@ -33,6 +33,10 @@ def dash2():
 def example_js():
     return render_template('example_js.html')
 
+@app.route('/example2')
+def example2():
+    return render_template('example2.html')
+
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 def dashboard():

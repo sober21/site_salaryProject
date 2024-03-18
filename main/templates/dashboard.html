@@ -17,7 +17,7 @@
 <!--{% endif %}-->
 <!--{{ us }}-->
 {% if workplace=='Упаковка' %}
-<div style="width: 500px;color:red">
+<div class="box">
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="uhours">Часы:</label>
@@ -34,7 +34,7 @@
 
 {% endif %}
 {% if workplace in ['1 отдел', '3 отдел'] %}
-<div>
+<div class="box">
 <div class="div-for-form">
 <form class="salary" action="" method="post">
     <label class="label-dash" for="hours">Часы:</label>
@@ -52,6 +52,7 @@
 </form>
 </div></div>
 {% endif %}
+<div class="box"></div>
 <div>
 <h3 style="text-align: center">{{ year }} год</h3>
 <table>
