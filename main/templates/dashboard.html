@@ -155,6 +155,10 @@
             <td>{{ order[1] }}</td>
         </tr>
         {% endfor %}
+        <tr>
+            <th>Всего</th>
+            <th>{{ sum_orders[0][0] }}</th>
+        </tr>
     </table>
     {% endif %}
 {% endif %}

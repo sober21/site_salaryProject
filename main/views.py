@@ -29,9 +29,11 @@ def index():
 def dash2():
     return render_template('dash2.html')
 
+
 @app.route('/example_js')
 def example_js():
     return render_template('example_js.html')
+
 
 @app.route('/example2')
 def example2():
@@ -51,11 +53,12 @@ def dashboard():
         0]
 
     if request.method == 'POST':
-        sal_today, sal_data, sum_of_period, orders_data, hours = None, None, None, None, None
+        sal_today, sal_data, sum_of_period, orders_data, total_orders, hours = None, None, None, None, None, None
         form = tuple(request.form.keys())[-1]
         action_orders = '+' if 'next_day' in form else ('-' if 'last_day' in form else None)
         if form in ('next_day', 'get_day', 'last_day'):
-            orders_data, user_date = get_order_data_day(email=session["email"], current_day=user_date)(action_orders)
+            orders_data, total_orders, user_date = get_order_data_day(email=session["email"], current_day=user_date)(
+                action_orders)
 
         action_week = '+' if 'next_week' in form else ('-' if 'last_week' in form else None)
         if form in ('get_week', 'next_week', 'last_week'):  # За неделю
@@ -120,8 +123,8 @@ def dashboard():
         user_month = user_date.strftime('%B')
         return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, sal_data=sal_data,
                                sal_today=sal_today, sum=sum_of_period, email=session['email'], us=user_render_date,
-                               form=form,
-                               d=d, ref=ref, orders=orders_data, ho=hours, month=user_month, year=user_year)
+                               form=form, d=d, ref=ref, orders=orders_data, ho=hours, month=user_month, year=user_year,
+                               sum_orders=total_orders)
     return render_template('dashboard.html', workplace=workplace, cur_date=cur_date, title='Добавить',
                            email=session['email'], us=user_render_date, d=d, ref=ref, month=user_month, year=user_year)
 
@@ -196,4 +199,5 @@ def register():
 
 
 if __name__ == '__main__':
-    pass
+    app.debug = True
+    app.run()

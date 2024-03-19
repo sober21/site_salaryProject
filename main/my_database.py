@@ -96,7 +96,9 @@ def get_order_data_day(email: str, current_day: datetime, connect=connection):
             result = execute_read_query(connect, f'SELECT date, positions, order_name '
                                                  f'FROM packer_orders_data WHERE email = "{email}" and date = "{current_day}" '
                                                  f'ORDER BY id ASC')
-            return result, current_day
+            total = execute_read_query(connect, f'SELECT SUM(positions) FROM packer_orders_data WHERE email = "{email}" and '
+                                                f'date = "{current_day}"')
+            return result, total, current_day
 
         return inner()
 
@@ -243,18 +245,11 @@ if __name__ == '__main__':
     #                               f'SELECT date,hours,salary, positions, incoming_positions FROM salary_users WHERE '
     #                               f'email = "dima@mail.ru" ORDER BY date ASC')
     # execute_query(connection, 'DELETE FROM packer_orders_data')
-    # for i in range(30):
-    #     pos = random.randint(1, 100)
-    #     dt = random.randint(1, 30)
-    #     em = random.choice(['max@mail.ru', 'dima@mail.ru', 'sasha@mail.ru'])
-    #     o_name = random.choice(['рем', 'energy', 'dvurech', 'moscow'])
-    #     execute_query(connection, f'INSERT INTO packer_orders_data(email, positions, order_name, date) '
-    #                               f'VALUES("{em}" ,{pos}, "{o_name}", "2024-03-{dt}")')
 
 
 
-    print(us)
-    # for i in table:
-    #     print(i)
+
+
+
 
 
