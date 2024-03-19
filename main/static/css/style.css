@@ -1,3 +1,8 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 html,body {
   height: 100%;
   width: 100%;
@@ -5,6 +10,9 @@ html,body {
   background: #87CEEB;
   display: grid;
   margin: 2px;
+}
+article, aside, details, figure, footer, header, hgroup, menu, nav, section {
+    display: block;
 }
 
 footer {
@@ -100,8 +108,35 @@ caption {
     height: auto;
     width: 100%;
     margin-bottom: auto;
+    color:red;
 }
 
-.box {
-    border: 2px solid rgb(200,200,200);
+.lk-text {
+    padding: 15px;
+}
+.login-form {
+}
+@media screen and (max-width: 785px){
+    .login-form {
+        display: block;
+    }
+    .input-login {
+        display: block;
+    }
+    .button-login {
+        margin-top: 10px;
+    }
+}
+
+
+@media screen and (max-width: 447px) {
+    td, th {
+        padding: 10px 5px;
+    }
+}
+
+@media screen and (max-width: 358px) {
+    td, th {
+        padding: 5px 0;
+    }
 }

@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{{ title }}{% endblock title %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="static/css/style.css" rel="stylesheet" type="text/css">
-
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -16,9 +16,9 @@
         <a class="nav-link" href="{{ url_for('index') }}">Главная</a>
         <a class="nav-link" href="{{ url_for('login') }}">{{ ref }}</a>
         <a class="nav-link" href="{{ url_for('logout') }}">Выход</a>
-        <a class="nav-link" href="{{ url_for('dash2') }}">learn_web</a>
-        <a class="nav-link" href="{{ url_for('example_js') }}">example_js</a>
-        <a class="nav-link" href="{{ url_for('example2') }}">example2</a>
+<!--        <a class="nav-link" href="{{ url_for('dash2') }}">learn_web</a>-->
+<!--        <a class="nav-link" href="{{ url_for('example_js') }}">example_js</a>-->
+<!--        <a class="nav-link" href="{{ url_for('example2') }}">example2</a>-->
       </div>
 
 </nav>
