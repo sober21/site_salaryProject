@@ -21,11 +21,12 @@ footer {
     text-align: center;
     background-color: black;
     margin-top: auto;
+    padding: 5px 20px;
 }
 
 
 label {
-    color: #ff9900;
+    color: black;
     padding-right: 0px;
     width: 150px;
     text-align: left;
@@ -77,6 +78,10 @@ caption {
     background-color: yellow;
 }
 
+.label-register {
+    color: #ff9900;
+}
+
 .salary {
     display: grid;
     width: 300px;
@@ -109,14 +114,25 @@ caption {
     width: 100%;
     margin-bottom: auto;
     color:red;
+    padding: 5px 20px;
+}
+.nav-link {
+    display: inline;
 }
 
 .lk-text {
     padding: 15px;
 }
+.ind-text {
+    padding: 10px 25px
+}
+
+.button-login, .input-login, label{
+    font-size: 1.5em;
+}
 .login-form {
 }
-@media screen and (max-width: 785px){
+@media screen and (max-width: 1000px){
     .login-form {
         display: block;
     }
